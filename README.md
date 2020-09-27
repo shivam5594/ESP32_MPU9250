@@ -1,5 +1,13 @@
-## SPI master example
+## I2C master code
 
-This code displays some simple graphics with varying pixel colors on the 320x240 LCD on an ESP-WROVER-KIT board.
+This code communicated ESP32 with MPU9250 over I2C bus. I am using ESP32-Cam board but code should work on any ESP32 board provided you change the pins for I2C accordingly. This code has parts of basic math and matrix code ported from STM HAL library according to needs.
 
-If you want to adapt this example to another type of display or pinout, check [main/spi_master_example_main.c] for comments with some implementation details.
+## Current state
+
+- I2C communication is estrablished and able to read and write registers.
+- Working on Calibration, unable to calibrate.
+
+## Future work
+
+- Add SPI support
+- Add Wi-Fi telemetry 
