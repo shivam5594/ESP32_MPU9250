@@ -128,15 +128,15 @@ class MPU9250 : public IMU {
 		gpio_num_t _interruptPin;
 		SemaphoreHandle_t _interruptSemaphore;
 		bool isConfigured = false;
-		float _accelScale;
-		mpu9250_accel_range _accelRange;
+		float _accelScale = 0;
+		mpu9250_accel_range _accelRange = ACCEL_RANGE_2G;
 
-		float _gyroScale;
-		mpu9250_gyro_range _gyroRange;
+		float _gyroScale = 0;
+		mpu9250_gyro_range _gyroRange = GYRO_RANGE_250DPS;
 
-		float _magScaleX, _magScaleY, _magScaleZ;
-		mpu9250_dlpf_bandwidth _bandwidth;
-		uint8_t _srd;
+		float _magScaleX = 0, _magScaleY = 0, _magScaleZ = 0;
+		mpu9250_dlpf_bandwidth _bandwidth = DLPF_BANDWIDTH_OFF;
+		uint8_t _srd = 0;
 
 		// constants
 		const float _tempScale = 333.87f;
@@ -261,7 +261,7 @@ class MPU9250 : public IMU {
 
 		esp_err_t writeRegister(uint8_t subAddress, uint8_t data);
 		esp_err_t readRegisters(uint8_t subAddress, uint8_t count, uint8_t* dest);
-		bool writeAK8963Register(uint8_t subAddress, uint8_t data);
+		esp_err_t writeAK8963Register(uint8_t subAddress, uint8_t data);
 		void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest);
 };
 

@@ -51,7 +51,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 //	_bus = new MPU9250_SPI(spi);
 //}
 
-MPU9250::MPU9250(i2c_port_t * i2c) : _interruptPin(GPIO_NUM_NC), _interruptSemaphore(0), _accelScale(0), _gyroScale(0), _magScaleX(0), _magScaleY(0), _magScaleZ(0)
+MPU9250::MPU9250(i2c_port_t * i2c) : _interruptPin(GPIO_NUM_NC), _interruptSemaphore(0)
 {
 	_bus = new MPU9250_I2C(i2c);
 }
@@ -306,7 +306,6 @@ esp_err_t MPU9250::setSrd(uint8_t srd) {
 	}
 	if(srd > 9)
 	{
-		printf("---------------\n");
 		// set AK8963 to Power Down
 		if(writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN)){
 		  return ESP_FAIL;
@@ -461,7 +460,7 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 
 	/* get the magnetometer calibration */
 	// set AK8963 to Power Down
-	if( !writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN) ){
+	if( writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN) ){
 		return ESP_FAIL;
 	}
 //	else {
@@ -471,7 +470,7 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	vTaskDelay(100); // long wait between AK8963 mode changes
 
 	// set AK8963 to FUSE ROM access
-	if( !writeAK8963Register(AK8963_CNTL1,AK8963_FUSE_ROM) ){
+	if( writeAK8963Register(AK8963_CNTL1,AK8963_FUSE_ROM) ){
 		return ESP_FAIL;
 	}
 //	else {
@@ -487,7 +486,7 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	_magScaleZ = ((((float)buff[2]) - 128.0f)/(256.0f) + 1.0f) * 4912.0f / 32760.0f; // micro Tesla
 
 	// set AK8963 to Power Down
-	if( !writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN) ){
+	if( writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN) ){
 		return ESP_FAIL;
 	}
 //	else {
@@ -497,7 +496,7 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	vTaskDelay(100); // long wait between AK8963 mode changes
 
 	// set AK8963 to 16 bit resolution, 100 Hz update rate
-	if( !writeAK8963Register(AK8963_CNTL1,AK8963_CNT_MEAS2) ){
+	if( writeAK8963Register(AK8963_CNTL1,AK8963_CNT_MEAS2) ){
 		return ESP_FAIL;
 	}
 //	else {
@@ -1000,7 +999,7 @@ void MPU9250::getMotion10(float* ax, float* ay, float* az, float* gx, float* gy,
 }
 
 /* writes a register to the AK8963 given a register address and data */
-bool MPU9250::writeAK8963Register(uint8_t subAddress, uint8_t data){
+esp_err_t MPU9250::writeAK8963Register(uint8_t subAddress, uint8_t data){
 	uint8_t count = 1;
 	uint8_t buff[1];
 
@@ -1013,10 +1012,10 @@ bool MPU9250::writeAK8963Register(uint8_t subAddress, uint8_t data){
 	readAK8963Registers(subAddress, sizeof(buff), &buff[0]);
 
 	if(buff[0] == data) {
-  		return true;
+  		return ESP_OK;
   	}
   	else{
-  		return false;
+  		return ESP_FAIL;
   	}
 }
 
