@@ -46,7 +46,7 @@ esp_err_t MPU9250_I2C::writeRegister(uint8_t subAddress, uint8_t data){
 	i2c_master_start(cmd);
 	i2c_master_write_byte(cmd, (0x68 << 1) | I2C_MASTER_WRITE, 0x1);
 	i2c_master_write(cmd, &subAddress, 1, 0x1);
-	i2c_master_write(cmd, &data, 1, 0x1);
+	i2c_master_write_byte(cmd, data, 0x1);
 	i2c_master_stop(cmd);
 	esp_err_t ret = i2c_master_cmd_begin(_bus, cmd, portTICK_RATE_MS);
 	i2c_cmd_link_delete(cmd);
@@ -55,7 +55,7 @@ esp_err_t MPU9250_I2C::writeRegister(uint8_t subAddress, uint8_t data){
 		return ESP_FAIL;
 	}
 
-	vTaskDelay(portTICK_RATE_MS); // need to slow down how fast I write to MPU9250
+	vTaskDelay(1); // need to slow down how fast I write to MPU9250
 
 	/* read back the register */
 	//buff = _bus->Read(subAddress);

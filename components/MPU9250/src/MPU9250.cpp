@@ -167,7 +167,6 @@ esp_err_t MPU9250::setAccelRange(mpu9250_accel_range accelRange)
 	}
 
 	_accelRange = accelRange;
-	printf("Set accelerometer to option %d.\n", accelRange);
 	return ESP_OK;
 }
 
@@ -210,7 +209,6 @@ esp_err_t MPU9250::setGyroRange(mpu9250_gyro_range gyroRange)
 	}
 
 	_gyroRange = gyroRange;
-	printf("Set gyroscope to option %d.\n", gyroRange);
 	return ESP_OK;
 }
 
@@ -346,6 +344,21 @@ esp_err_t MPU9250::setSrd(uint8_t srd) {
 	return ESP_OK;
 }
 
+esp_err_t MPU9250::Configure()
+{
+	if (!isConfigured)
+	{
+		printf("Configuring IMU.\n");
+		if (Configure(ACCEL_RANGE_16G, GYRO_RANGE_2000DPS))
+		{
+			printf("IMU is not configured.\n");
+			return ESP_FAIL;
+		}
+	}
+	//fflush(stdout);
+	return ESP_OK;
+}
+
 /* starts I2C communication and sets up the MPU-9250 */
 esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range gyroRange){
 	uint8_t buff[3];
@@ -359,25 +372,16 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	if( _bus->writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("Selected clock source to gyro.\n");
-//	}
 
 	// enable I2C master mode
 	if( _bus->writeRegister(USER_CTRL,I2C_MST_EN) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("enabled I2C master mode.\n");
-//	}
 
 	// set the I2C bus speed to 400 kHz
 	if( _bus->writeRegister(I2C_MST_CTRL,I2C_MST_CLK) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("set the I2C bus speed to 400 kHz.\n");
-//	}
 
 	// set AK8963 to Power Down
 	writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN);
@@ -396,25 +400,16 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	if( _bus->writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("select clock source to gyro.\n");
-//	}
 
 	// check the WHO AM I byte, expected value is 0x71 (decimal 113) OR 0x73 (decimal 115)
 	if( whoAmI() != 0x71 && whoAmI() != 0x73){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("WHO AM I confirmed.\n");
-//	}
 
 	// enable accelerometer and gyro
 	if( _bus->writeRegister(PWR_MGMNT_2,SEN_ENABLE) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("enable accelerometer and gyro.\n");
-//	}
 
 	setAccelRange(accelRange);
 
@@ -438,34 +433,22 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	if( _bus->writeRegister(USER_CTRL,I2C_MST_EN) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("enabled I2C master mode.\n");
-//	}
 
 	// set the I2C bus speed to 400 kHz
 	if( _bus->writeRegister(I2C_MST_CTRL,I2C_MST_CLK) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("I2C bus speed set to 400 kHz.\n");
-//	}
 
 	// check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
 	if( whoAmIAK8963() != 72 ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("AK8963 WHO AM I confirmed.\n");
-//	}
 
 	/* get the magnetometer calibration */
 	// set AK8963 to Power Down
 	if( writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("set AK8963 to Power Down.\n");
-//	}
 
 	vTaskDelay(100); // long wait between AK8963 mode changes
 
@@ -473,9 +456,6 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	if( writeAK8963Register(AK8963_CNTL1,AK8963_FUSE_ROM) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("set AK8963 to FUSE ROM access.\n");
-//	}
 
 	vTaskDelay(100); // long wait between AK8963 mode changes
 
@@ -489,9 +469,6 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	if( writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("AK8963 Power Down.\n");
-//	}
 
 	vTaskDelay(100); // long wait between AK8963 mode changes
 
@@ -499,19 +476,12 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	if( writeAK8963Register(AK8963_CNTL1,AK8963_CNT_MEAS2) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("set AK8963 to 16 bit resolution, 100 Hz update rate.\n");
-//	}
-
 	vTaskDelay(100); // long wait between AK8963 mode changes
 
 	// select clock source to gyro
 	if( _bus->writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL) ){
 		return ESP_FAIL;
 	}
-//	else {
-//		printf("select clock source to gyro.\n");
-//	}
 
 	// instruct the MPU9250 to get 7 bytes of data from the AK8963 at the sample rate
 	readAK8963Registers(AK8963_HXL,sizeof(data),&data[0]);
@@ -578,55 +548,55 @@ int MPU9250::setFilt(mpu9250_dlpf_bandwidth accel_bandwidth, mpu9250_dlpf_bandwi
 			break;
 	}
 
-		switch(gyro_bandwidth) {
-			case DLPF_BANDWIDTH_250HZ:
-					if( !_bus->writeRegister(CONFIG,GYRO_DLPF_250) ){ // setting gyro bandwidth to 184Hz
-							return -1;
-					}
-					break;
+	switch(gyro_bandwidth) {
+		case DLPF_BANDWIDTH_250HZ:
+			if( !_bus->writeRegister(CONFIG,GYRO_DLPF_250) ){ // setting gyro bandwidth to 184Hz
+				return -1;
+			}
+			break;
 
-				case DLPF_BANDWIDTH_184HZ:
-						if( !_bus->writeRegister(CONFIG,GYRO_DLPF_184) ){ // setting gyro bandwidth to 184Hz
-								return -1;
-						}
-						break;
+		case DLPF_BANDWIDTH_184HZ:
+				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_184) ){ // setting gyro bandwidth to 184Hz
+					return -1;
+				}
+				break;
 
-				case DLPF_BANDWIDTH_92HZ:
-						if( !_bus->writeRegister(CONFIG,GYRO_DLPF_92) ){ // setting gyro bandwidth to 92Hz
-								return -1;
-						}
-						break;
+		case DLPF_BANDWIDTH_92HZ:
+				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_92) ){ // setting gyro bandwidth to 92Hz
+					return -1;
+				}
+				break;
 
-				case DLPF_BANDWIDTH_41HZ:
-						if( !_bus->writeRegister(CONFIG,GYRO_DLPF_41) ){ // setting gyro bandwidth to 41Hz
-								return -1;
-						}
-						break;
+		case DLPF_BANDWIDTH_41HZ:
+				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_41) ){ // setting gyro bandwidth to 41Hz
+					return -1;
+				}
+				break;
 
-				case DLPF_BANDWIDTH_20HZ:
-						if( !_bus->writeRegister(CONFIG,GYRO_DLPF_20) ){ // setting gyro bandwidth to 20Hz
-								return -1;
-						}
-						break;
+		case DLPF_BANDWIDTH_20HZ:
+				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_20) ){ // setting gyro bandwidth to 20Hz
+					return -1;
+				}
+				break;
 
-				case DLPF_BANDWIDTH_10HZ:
-						if( !_bus->writeRegister(CONFIG,GYRO_DLPF_10) ){ // setting gyro bandwidth to 10Hz
-								return -1;
-						}
-						break;
+		case DLPF_BANDWIDTH_10HZ:
+				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_10) ){ // setting gyro bandwidth to 10Hz
+					return -1;
+				}
+				break;
 
-				case DLPF_BANDWIDTH_5HZ:
-						if( !_bus->writeRegister(CONFIG,GYRO_DLPF_5) ){ // setting gyro bandwidth to 5Hz
-								return -1;
-						}
-						break;
+		case DLPF_BANDWIDTH_5HZ:
+				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_5) ){ // setting gyro bandwidth to 5Hz
+					return -1;
+				}
+				break;
 
-				case DLPF_BANDWIDTH_OFF:
-						if( !_bus->writeRegister(CONFIG,GYRO_DLPF_OFF) ){ // setting gyro bandwidth to 5Hz
-								return -1;
-						}
-						break;
-		}
+		case DLPF_BANDWIDTH_OFF:
+				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_OFF) ){ // setting gyro bandwidth to 5Hz
+					return -1;
+				}
+				break;
+	}
 
 	/* setting the sample rate divider */
 	if( !_bus->writeRegister(SMPDIV,SRD) ){ // setting the sample rate divider
@@ -928,7 +898,6 @@ void MPU9250::getMotion9(float* ax, float* ay, float* az, float* gx, float* gy, 
 	int16_t mag[3];
 
 	getMotion9Counts(&accel[0], &accel[1], &accel[2], &gyro[0], &gyro[1], &gyro[2], &mag[0], &mag[1], &mag[2]);
-	//printf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", accel[0], accel[1], accel[2], gyro[0], gyro[1], gyro[2], mag[0], mag[1], mag[2]);
 
 	*ax = ((float) accel[0]) * _accelScale; // typecast and scale to values
 	*ay = ((float) accel[1]) * _accelScale;
@@ -941,7 +910,6 @@ void MPU9250::getMotion9(float* ax, float* ay, float* az, float* gx, float* gy, 
 	*hx = ((float) mag[0]) * _magScaleX;
 	*hy = ((float) mag[1]) * _magScaleY;
 	*hz = ((float) mag[2]) * _magScaleZ;
-	//printf("%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n", *ax,(float) accel[1],(float) accel[2],(float) gyro[0], (float) gyro[1], (float) gyro[2],(float) mag[0], (float) mag[1], (float) mag[2]);
 }
 
 /* get accelerometer, magnetometer, and temperature data (in SI units) given pointers to store values, return data as counts */
@@ -1268,16 +1236,6 @@ esp_err_t MPU9250::CalibrateGyroTearDown()
 
 void MPU9250::Get(Measurement_t& measurement)
 {
-	if (!isConfigured)
-	{
-		printf("Configuring IMU.\n");
-		if (ESP_OK != Configure(ACCEL_RANGE_16G, GYRO_RANGE_2000DPS))
-		{
-			printf("IMU is not configured.\n");
-			return;
-		}
-	}
-
 	getMotion9(&measurement.Accelerometer[0],
 			   &measurement.Accelerometer[1],
 			   &measurement.Accelerometer[2],
@@ -1287,6 +1245,4 @@ void MPU9250::Get(Measurement_t& measurement)
 			   &measurement.Magnetometer[0],
 			   &measurement.Magnetometer[1],
 			   &measurement.Magnetometer[2]);
-//	printf("%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n", measurement.Accelerometer[0],measurement.Accelerometer[1], measurement.Accelerometer[2], measurement.Gyroscope[0],
-//			   measurement.Gyroscope[1],measurement.Gyroscope[2], measurement.Magnetometer[0], measurement.Magnetometer[1], measurement.Magnetometer[2]);
 }

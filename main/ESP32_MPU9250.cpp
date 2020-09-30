@@ -45,15 +45,14 @@ extern "C" void app_main(void)
 		printf("-- %d", ret1);
 	}
 
-	if(!imu->isCalibrated())
-		imu->Calibrate();
-	else
-		printf("calibrated already.\n");
-
-	fflush(stdout);
+	if(ESP_OK == imu->Configure())
+	{
+		if(!imu->isCalibrated())
+			imu->Calibrate();
+	}
 
 	while(1){
-		//imu->ReadAll();
+		imu->ReadAll();
 		vTaskDelay(portTICK_PERIOD_MS);
 	}
 

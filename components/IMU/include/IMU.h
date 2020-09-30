@@ -68,6 +68,7 @@ class IMU
 
 		void ReadAll();
 		void Calibrate();
+		virtual esp_err_t Configure();
 		void CalibrateAccelerometer();
 		virtual esp_err_t CalibrateAccelSetup();
 		virtual esp_err_t CalibrateAccelTearDown();
@@ -95,7 +96,7 @@ class IMU
 	private:
 		//EEPROM * eeprom_ = 0;
 		calibration_t calibration_;
-		size_t _numSamples = 100;
+		size_t _numSamples = 1000;
 		const float reference_acc_vector_[3] = {0.0f, 0.0f, 9.82f};
 
 };

@@ -189,15 +189,17 @@ void IMU::ReadAll(){
 	Measurement_t meas;
 	Get(meas);
 
-	printf("%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n\n", 	meas.Accelerometer[0],
-														meas.Accelerometer[1],
-														meas.Accelerometer[2],
-														meas.Gyroscope[0],
-														meas.Gyroscope[1],
-														meas.Gyroscope[2],
-														meas.Magnetometer[0],
-														meas.Magnetometer[1],
-														meas.Magnetometer[2]);
+	printf("%f\t%f\t%f\t", 	meas.Accelerometer[0],
+							meas.Accelerometer[1],
+							meas.Accelerometer[2]);
+
+	printf("%f\t%f\t%f\t", 	meas.Gyroscope[0] * 57.296,
+							meas.Gyroscope[1] * 57.296,
+							meas.Gyroscope[2] * 57.296);
+
+	printf("%f\t%f\t%f\n", 	meas.Magnetometer[0],
+							meas.Magnetometer[1],
+							meas.Magnetometer[2]);
 }
 
 void IMU::Calibrate()
@@ -208,28 +210,6 @@ void IMU::Calibrate()
 
 	printf("Calibrating IMU\n");
 	vTaskDelay(10);
-	if(!isAccelerometerCalibrated())
-	{
-		if(CalibrateAccelSetup())
-		{
-			printf("Accelerometer calibration setup failed.\n");
-		}
-		printf("Getting "); printf("%d", _numSamples); printf(" accelerometer samples:\n");
-		for (int i = 0; i < _numSamples; ++i) {
-			Get(meas);
-			add_f32(meas.Accelerometer, avg_acc, avg_acc, 3);
-			//printf("%f", meas.Accelerometer[0]); printf("\t");
-			//printf("%f", meas.Accelerometer[1]); printf("\t");
-			//printf("%f\n", meas.Accelerometer[2]);
-			vTaskDelay(1);
-		}
-		scale_f32(avg_acc, 1.f/_numSamples, avg_acc, 3);
-
-		if(CalibrateAccelTearDown())
-		{
-			printf("Accelerometer calibration tear down failed.\n");
-		}
-	}
 
 	if(!isGyroscopeCalibrated())
 	{
@@ -242,9 +222,9 @@ void IMU::Calibrate()
 		for (int i = 0; i < _numSamples; ++i) {
 			Get(meas);
 			add_f32(meas.Gyroscope, avg_gyro, avg_gyro, 3);
-			//printf("%f", meas.Gyroscope[0]); printf("\t");
-			//printf("%f", meas.Gyroscope[1]); printf("\t");
-			//printf("%f\n", meas.Gyroscope[2]);
+			printf("%f", meas.Gyroscope[0]); printf("\t");
+			printf("%f", meas.Gyroscope[1]); printf("\t");
+			printf("%f\n", meas.Gyroscope[2]);
 			vTaskDelay(1);
 		}
 		scale_f32(avg_gyro, 1.f/_numSamples, calibration_.gyro_bias, 3);
@@ -252,6 +232,29 @@ void IMU::Calibrate()
 		if(CalibrateGyroTearDown())
 		{
 			printf("Gyroscope calibration tear down failed.\n");
+		}
+	}
+
+	if(!isAccelerometerCalibrated())
+	{
+		if(CalibrateAccelSetup())
+		{
+			printf("Accelerometer calibration setup failed.\n");
+		}
+		printf("Getting "); printf("%d", _numSamples); printf(" accelerometer samples:\n");
+		for (int i = 0; i < _numSamples; ++i) {
+			Get(meas);
+			add_f32(meas.Accelerometer, avg_acc, avg_acc, 3);
+			printf("%f", meas.Accelerometer[0]); printf("\t");
+			printf("%f", meas.Accelerometer[1]); printf("\t");
+			printf("%f\n", meas.Accelerometer[2]);
+			vTaskDelay(1);
+		}
+		scale_f32(avg_acc, 1.f/_numSamples, avg_acc, 3);
+
+		if(CalibrateAccelTearDown())
+		{
+			printf("Accelerometer calibration tear down failed.\n");
 		}
 	}
 
@@ -363,83 +366,92 @@ float IMU::vector_length(const float v[3])
   return sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
 }
 
-void IMU::calibrateImu(const float desired_acc_vector[3],
-				  const float actual_acc_vector[3],
-				  float calibration_matrix[9])
+void IMU::calibrateImu(	const float desired_acc_vector[3],
+						const float actual_acc_vector[3],
+						float calibration_matrix[9])
 {
-  // Scale vectors to unity
-  // scale_f32 does not take a const vector, but it does not modify the
-  // source vector (hence the const_cast)
-  printf("desired_acc_vector:\t"); printf("%f", desired_acc_vector[0]); printf("\t");
-  printf("%f", desired_acc_vector[1]); printf("\t"); printf("%f", desired_acc_vector[2]); printf("\n");
-  float len_des = vector_length(desired_acc_vector);
-  printf("len_des:\t"); printf("%f\n", len_des);
-  float d[3];
-  scale_f32(const_cast<float*>(desired_acc_vector), 1.f/len_des, d, 3);
-  printf("d:\t"); printf("%f", d[0]); printf("\t");
-  printf("%f", d[1]); printf("\t"); printf("%f", d[2]); printf("\n");
+	printf("\n----------------------------------------\n");
+	// Scale vectors to unity
+	// scale_f32 does not take a const vector, but it does not modify the
+	// source vector (hence the const_cast)
+	printf("desired_acc_vector:\t\t%f\t%f\t%f\n", desired_acc_vector[0],
+											  desired_acc_vector[1],
+											  desired_acc_vector[2]);
 
-  printf("actual_acc_vector:\t"); printf("%f", actual_acc_vector[0]); printf("\t");
-  printf("%f", actual_acc_vector[1]); printf("\t"); printf("%f", actual_acc_vector[2]); printf("\n");
-  float len_act = vector_length(actual_acc_vector);
-  printf("len_act:\t"); printf("%f\n", len_act);
-  float a[3];
-  scale_f32(const_cast<float*>(actual_acc_vector), 1.f/len_act, a, 3);
-  printf("a:\t"); printf("%f", a[0]); printf("\t");
-  printf("%f", a[1]); printf("\t"); printf("%f", a[2]); printf("\n");
-  // Find rotation matrix R between vectors, s.t. Ra=d
-  // See: https://math.stackexchange.com/a/476311
+	float len_des = vector_length(desired_acc_vector);
+	printf("Length of desired vector:\t%f\n",len_des);
+	float d[3];
+	scale_f32(const_cast<float*>(desired_acc_vector), 1.f/len_des, d, 3);
+	printf("Scaled Desired:\t\t\t%f\t%f\t%f\n\n",d[0],
+											 d[1],
+											 d[2]);
 
-  // Cross product: v = a x d
-  float v[3] = {a[1]*d[2]-a[2]*d[1],
+	printf("actual_acc_vector:\t\t%f\t%f\t%f\n", actual_acc_vector[0],
+											 actual_acc_vector[1],
+											 actual_acc_vector[2]);
+
+	float len_act = vector_length(actual_acc_vector);
+	printf("Length of desired vector:\t%f\n",len_act);
+	float a[3];
+	scale_f32(const_cast<float*>(actual_acc_vector), 1.f/len_act, a, 3);
+	printf("Scaled Actual:\t\t\t%f\t%f\t%f\n\n",a[0],
+											a[1],
+											a[2]);
+	// Find rotation matrix R between vectors, s.t. Ra=d
+	// See: https://math.stackexchange.com/a/476311
+
+	// Cross product: v = a x d
+	float v[3] = {a[1]*d[2]-a[2]*d[1],
 				a[2]*d[0]-a[0]*d[2],
 				a[0]*d[1]-a[1]*d[0]};
-  printf("v:\t"); printf("%f", v[0]); printf("\t");
-  printf("%f", v[1]); printf("\t"); printf("%f", v[2]); printf("\n");
-  // Sine between vectors: s = ||v||
-  float s = vector_length(v);
-  printf("s:\t"); printf("%f\n", s);
-  // Cosine between vectors: c = a . b
-  float c;
-  dot_prod_f32(a, d, 3, &c);
-  printf("c:\t"); printf("%f\n", c);
-  // R = I + [v]_x + [v]_x^2 (1-c)/(s^2), where [v]_x is the skew-symmetric
-  // cross product matrix of v
-  // It is not applicable if a and b point into exactly opposite directions,
-  // which is unlikely so we do not handle it.
-  float R[9] = {1.f, 0.f, 0.f,
+	printf("x prod:\t%f\t%f\t%f\n",v[0],v[1],v[2]);
+
+	// Sine between vectors: s = ||v||
+	float s = vector_length(v);
+	printf("sin:\t%f\n", s);
+
+	// Cosine between vectors: c = a . b
+	float c;
+	dot_prod_f32(a, d, 3, &c);
+	printf("cos:\t%f\n",c);
+
+	// R = I + [v]_x + [v]_x^2 (1-c)/(s^2), where [v]_x is the skew-symmetric
+	// cross product matrix of v
+	// It is not applicable if a and b point into exactly opposite directions,
+	// which is unlikely so we do not handle it.
+	float R[9] = {1.f, 0.f, 0.f,
 					 0.f, 1.f, 0.f,
 					 0.f, 0.f, 1.f,};
-  matrix_instance_f32 R_;
-  mat_init_f32(&R_, 3, 3, R);
-  float v_x_data[9] = { 0.f, -v[2],  v[1],
+	matrix_instance_f32 R_;
+	mat_init_f32(&R_, 3, 3, R);
+	float v_x_data[9] = { 0.f, -v[2],  v[1],
 					   v[2],   0.f, -v[0],
 					  -v[1],  v[0],   0.f};
-  matrix_instance_f32 temp;
-  mat_init_f32(&temp, 3, 3, v_x_data);
-  mat_add_f32(&R_, &temp, &R_);
-  mat_mult_f32(&temp, &temp, &temp);
-  mat_scale_f32(&temp, (1.f - c) / (s * s), &temp);
-  mat_add_f32(&R_, &temp, &R_);
+	matrix_instance_f32 temp;
+	mat_init_f32(&temp, 3, 3, v_x_data);
+	mat_add_f32(&R_, &temp, &R_);
+	mat_mult_f32(&temp, &temp, &temp);
+	mat_scale_f32(&temp, (1.f - c) / (s * s), &temp);
+	mat_add_f32(&R_, &temp, &R_);
 
-  // Regularize rotation matrix by making an SVD decomposition and forcing singular values to be 1
-  float U[3*3]; matrix_instance_f32 U_; mat_init_f32(&U_, 3, 3, (float *)U);
-  float S[3*3]; matrix_instance_f32 S_; mat_init_f32(&S_, 3, 3, (float *)S);
-  float V[3*3]; matrix_instance_f32 V_; mat_init_f32(&V_, 3, 3, (float *)V);
+	// Regularize rotation matrix by making an SVD decomposition and forcing singular values to be 1
+	float U[3*3]; matrix_instance_f32 U_; mat_init_f32(&U_, 3, 3, (float *)U);
+	float S[3*3]; matrix_instance_f32 S_; mat_init_f32(&S_, 3, 3, (float *)S);
+	float V[3*3]; matrix_instance_f32 V_; mat_init_f32(&V_, 3, 3, (float *)V);
 
-  /*svd(R[0], R[1], R[2], R[3], R[4], R[5], R[6], R[7], R[8],
+	/*svd(R[0], R[1], R[2], R[3], R[4], R[5], R[6], R[7], R[8],
 	  U[0], U[1], U[2], U[3], U[4], U[5], U[6], U[7], U[8],
 	  S[0], S[1], S[2], S[3], S[4], S[5], S[6], S[7], S[8],
 	  V[0], V[1], V[2], V[3], V[4], V[5], V[6], V[7], V[8]);*/
-  svd_3x3(R, U, S, V);
+	svd_3x3(R, U, S, V);
 
-  // Compute the regularized rotation matrix
-  float V_T[3*3]; matrix_instance_f32 V_T_; mat_init_f32(&V_T_, 3, 3, (float *)V_T);
-  mat_trans_f32(&V_, &V_T_);
-  mat_mult_f32(&U_, &V_T_, &R_); // R = U * V'
+	// Compute the regularized rotation matrix
+	float V_T[3*3]; matrix_instance_f32 V_T_; mat_init_f32(&V_T_, 3, 3, (float *)V_T);
+	mat_trans_f32(&V_, &V_T_);
+	mat_mult_f32(&U_, &V_T_, &R_); // R = U * V'
 
-  // Return the matrix
-  memcpy(calibration_matrix, R, 9*sizeof(R[0]));
+	// Return the matrix
+	memcpy(calibration_matrix, R, 9*sizeof(R[0]));
 }
 
 void IMU::rotateImuMeasurement(float& gx, float& gy, float& gz,

@@ -82,6 +82,7 @@ class MPU9250 : public IMU {
 
 		//MPU9250(PORT sensorPort, uint8_t address = 0x68);
 		esp_err_t Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range gyroRange);
+		esp_err_t Configure();
 		int setFilt(mpu9250_dlpf_bandwidth accel_bandwidth, mpu9250_dlpf_bandwidth gyro_bandwidth, uint8_t SRD = 0);
 		void ConfigureInterrupt(gpio_num_t interruptPin);
 		//void ConfigureInterrupt(GPIO_TypeDef * GPIOx, uint32_t GPIO_Pin);
