@@ -230,113 +230,6 @@ matrix_status 	mat_mult_f32 (const matrix_instance_f32 *pSrcA, const matrix_inst
   uint16_t numColsB = pSrcB->numCols;            /* number of columns of input matrix B */
   uint16_t numColsA = pSrcA->numCols;            /* number of columns of input matrix A */
 
-#ifndef CM0_FAMILY
-
-  /* Run the below code for Cortex-M4 and Cortex-M3 */
-
-  float in1, in2, in3, in4;
-  uint16_t col, i = 0u, j, row = numRowsA, colCnt;      /* loop counters */
-  matrix_status status;                             /* status of matrix multiplication */
-
-#ifdef MATRIX_CHECK
-
-
-  /* Check for matrix mismatch condition */
-  if((pSrcA->numCols != pSrcB->numRows) ||
-	 (pSrcA->numRows != pDst->numRows) || (pSrcB->numCols != pDst->numCols))
-  {
-
-	/* Set status as MAT_SIZE_MISMATCH */
-	status = MAT_SIZE_MISMATCH;
-  }
-  else
-#endif /*      #ifdef MATRIX_CHECK    */
-
-  {
-	/* The following loop performs the dot-product of each row in pSrcA with each column in pSrcB */
-	/* row loop */
-	do
-	{
-	  /* Output pointer is set to starting address of the row being processed */
-	  px = pOut + i;
-
-	  /* For every row wise process, the column loop counter is to be initiated */
-	  col = numColsB;
-
-	  /* For every row wise process, the pIn2 pointer is set
-	   ** to the starting address of the pSrcB data */
-	  pIn2 = pSrcB->pData;
-
-	  j = 0u;
-
-	  /* column loop */
-	  do
-	  {
-		/* Set the variable sum, that acts as accumulator, to zero */
-		sum = 0.0f;
-
-		/* Initiate the pointer pIn1 to point to the starting address of the column being processed */
-		pIn1 = pInA;
-
-		/* Apply loop unrolling and compute 4 MACs simultaneously. */
-		colCnt = numColsA >> 2u;
-
-		/* matrix multiplication        */
-		while(colCnt > 0u)
-		{
-		  /* c(m,n) = a(1,1)*b(1,1) + a(1,2) * b(2,1) + .... + a(m,p)*b(p,n) */
-		  in3 = *pIn2;
-		  pIn2 += numColsB;
-		  in1 = pIn1[0];
-		  in2 = pIn1[1];
-		  sum += in1 * in3;
-		  in4 = *pIn2;
-		  pIn2 += numColsB;
-		  sum += in2 * in4;
-
-		  in3 = *pIn2;
-		  pIn2 += numColsB;
-		  in1 = pIn1[2];
-		  in2 = pIn1[3];
-		  sum += in1 * in3;
-		  in4 = *pIn2;
-		  pIn2 += numColsB;
-		  sum += in2 * in4;
-		  pIn1 += 4u;
-
-		  /* Decrement the loop count */
-		  colCnt--;
-		}
-
-		/* If the columns of pSrcA is not a multiple of 4, compute any remaining MACs here.
-		 ** No loop unrolling is used. */
-		colCnt = numColsA % 0x4u;
-
-		while(colCnt > 0u)
-		{
-		  /* c(m,n) = a(1,1)*b(1,1) + a(1,2) * b(2,1) + .... + a(m,p)*b(p,n) */
-		  sum += *pIn1++ * (*pIn2);
-		  pIn2 += numColsB;
-
-		  /* Decrement the loop counter */
-		  colCnt--;
-		}
-
-		/* Store the result in the destination buffer */
-		*px++ = sum;
-
-		/* Update the pointer pIn2 to point to the  starting address of the next column */
-		j++;
-		pIn2 = pSrcB->pData + j;
-
-		/* Decrement the column loop counter */
-		col--;
-
-	  } while(col > 0u);
-
-#else
-
-  /* Run the below code for Cortex-M0 */
 
   float *pInB = pSrcB->pData;                /* input data matrix pointer B */
   uint16_t col, i = 0u, row = numRowsA, colCnt;  /* loop counters */
@@ -402,8 +295,6 @@ matrix_status 	mat_mult_f32 (const matrix_instance_f32 *pSrcA, const matrix_inst
 		pIn2 = pInB + (numColsB - col);
 
 	  } while(col > 0u);
-
-#endif /* #ifndef CM0_FAMILY */
 
 	  /* Update the pointer pInA to point to the  starting address of the next row */
 	  i = i + numColsB;

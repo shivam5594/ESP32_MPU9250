@@ -391,7 +391,7 @@ void IMU::calibrateImu(	const float desired_acc_vector[3],
 											 actual_acc_vector[2]);
 
 	float len_act = vector_length(actual_acc_vector);
-	printf("Length of desired vector:\t%f\n",len_act);
+	printf("Length of actual vector:\t%f\n",len_act);
 	float a[3];
 	scale_f32(const_cast<float*>(actual_acc_vector), 1.f/len_act, a, 3);
 	printf("Scaled Actual:\t\t\t%f\t%f\t%f\n\n",a[0],
@@ -402,8 +402,8 @@ void IMU::calibrateImu(	const float desired_acc_vector[3],
 
 	// Cross product: v = a x d
 	float v[3] = {a[1]*d[2]-a[2]*d[1],
-				a[2]*d[0]-a[0]*d[2],
-				a[0]*d[1]-a[1]*d[0]};
+				  a[2]*d[0]-a[0]*d[2],
+				  a[0]*d[1]-a[1]*d[0]};
 	printf("x prod:\t%f\t%f\t%f\n",v[0],v[1],v[2]);
 
 	// Sine between vectors: s = ||v||
@@ -420,13 +420,13 @@ void IMU::calibrateImu(	const float desired_acc_vector[3],
 	// It is not applicable if a and b point into exactly opposite directions,
 	// which is unlikely so we do not handle it.
 	float R[9] = {1.f, 0.f, 0.f,
-					 0.f, 1.f, 0.f,
-					 0.f, 0.f, 1.f,};
+				  0.f, 1.f, 0.f,
+				  0.f, 0.f, 1.f,};
 	matrix_instance_f32 R_;
 	mat_init_f32(&R_, 3, 3, R);
-	float v_x_data[9] = { 0.f, -v[2],  v[1],
-					   v[2],   0.f, -v[0],
-					  -v[1],  v[0],   0.f};
+	float v_x_data[9] = { 0.f,   -v[2],   v[1],
+					      v[2],    0.f,  -v[0],
+					     -v[1],   v[0],   0.f};
 	matrix_instance_f32 temp;
 	mat_init_f32(&temp, 3, 3, v_x_data);
 	mat_add_f32(&R_, &temp, &R_);

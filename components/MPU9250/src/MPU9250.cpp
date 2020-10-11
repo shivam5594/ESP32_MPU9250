@@ -355,7 +355,6 @@ esp_err_t MPU9250::Configure()
 			return ESP_FAIL;
 		}
 	}
-	//fflush(stdout);
 	return ESP_OK;
 }
 
@@ -994,7 +993,7 @@ void MPU9250::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* de
 	_bus->writeRegister(I2C_SLV0_REG,subAddress); // set the register to the desired AK8963 sub address
 	_bus->writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | count); // enable I2C and request the bytes
 	//HAL_DelayHighRes(1); // 100 us wait = takes some time for these registers to fill
-	vTaskDelay(100 / portTICK_PERIOD_MS / 1000);
+	vTaskDelay(1);
 	_bus->readRegisters(EXT_SENS_DATA_00,count,dest); // read the bytes off the MPU9250 EXT_SENS_DATA registers
 }
 
