@@ -12,7 +12,7 @@
 #include "rt_nonfinite.h"
 #include "svd_3x3.h"
 #include "svd_3x3_impl.h"
-#include "matrix.h"
+#include "Matrix.h"
 #include "BasicMath.h"
 
 // Function Definitions
