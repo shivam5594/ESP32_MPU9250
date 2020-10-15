@@ -1,0 +1,7 @@
+#Eclipse files
+##############
+./.cproject
+./.project
+
+#ESP Project directories
+./build/
