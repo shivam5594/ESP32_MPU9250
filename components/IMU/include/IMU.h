@@ -66,7 +66,8 @@ class IMU
 		virtual void Get(Measurement_t& measurement) {};
 		virtual void GetEstimates(Estimates_t& estimates) {}; // if supported, eg. by Xsens IMU
 
-		void ReadAll_Raw();
+		void Read_all_Raw(void);
+		void Read_all_Corrected(void);
 		void Calibrate();
 		virtual esp_err_t Configure();
 		void CalibrateAccelerometer();
@@ -91,12 +92,13 @@ class IMU
 		void ValidateCalibrationMatrix(void);
 		float vector_length(const float v[3]);
 		void calibrateImu(const float desired_acc_vector[3], const float actual_acc_vector[3], float calibration_matrix[9]);
-		void rotateImuMeasurement(float& gx, float& gy, float& gz, float& ax, float& ay, float& az, const float calibration_matrix[9]);
+		void rotateImuMeasurement(float& ax, float& ay, float& az, const float calibration_matrix[9]);
 
 	private:
 		//EEPROM * eeprom_ = 0;
 		calibration_t calibration_;
-		size_t _numSamples = 1000;
+		Measurement_t meas;
+		size_t _numSamples = 500;
 		const float reference_acc_vector_[3] = {0.0f, 0.0f, 9.82f};
 
 };

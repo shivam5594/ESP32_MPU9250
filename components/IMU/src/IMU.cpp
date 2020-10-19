@@ -66,10 +66,7 @@ void IMU::CorrectMeasurement(Measurement_t& measurement, bool correctAcceleromet
 		measurement.Gyroscope[2] -= calibration_.gyro_bias[2];
 	}
 	if (correctAlignment && calibration_.imu_calibration_matrix_valid) {
-		rotateImuMeasurement(measurement.Gyroscope[0],
-							 measurement.Gyroscope[1],
-							 measurement.Gyroscope[2],
-							 measurement.Accelerometer[0],
+		rotateImuMeasurement(measurement.Accelerometer[0],
 							 measurement.Accelerometer[1],
 							 measurement.Accelerometer[2],
 							 calibration_.imu_calibration_matrix);
@@ -151,19 +148,16 @@ bool IMU::isCalibrated()
 
 bool IMU::isAccelerometerCalibrated()
 {
-	printf("0x%x ", calibration_.acc_bias_valid && calibration_.acc_scale_valid);
 	return (calibration_.acc_bias_valid && calibration_.acc_scale_valid);
 }
 
 bool IMU::isGyroscopeCalibrated()
 {
-	printf("0x%x ", calibration_.gyro_bias_valid);
 	return calibration_.gyro_bias_valid;
 }
 
 bool IMU::isAlignmentCalibrated()
 {
-	printf("0x%x \n",calibration_.imu_calibration_matrix_valid);
 	return calibration_.imu_calibration_matrix_valid;
 }
 
@@ -188,8 +182,27 @@ void IMU::SetCalibration(const float accelerometer_bias[3], const float accelero
 //	}
 }
 
-void IMU::ReadAll_Raw(){
-	Measurement_t meas;
+void IMU::Read_all_Corrected(void)
+{
+	Get(meas);
+	CorrectMeasurement(meas, calibration_.acc_bias_valid, calibration_.acc_scale_valid,
+			calibration_.gyro_bias_valid, calibration_.imu_calibration_matrix_valid);
+
+	printf("%f\t%f\t%f\t", 	meas.Accelerometer[0],
+							meas.Accelerometer[1],
+							meas.Accelerometer[2]);
+
+	printf("%f\t%f\t%f\t", 	meas.Gyroscope[0],
+							meas.Gyroscope[1],
+							meas.Gyroscope[2]);
+
+	printf("%f\t%f\t%f\n", 	meas.Magnetometer[0],
+							meas.Magnetometer[1],
+							meas.Magnetometer[2]);
+
+}
+
+void IMU::Read_all_Raw(void){
 	Get(meas);
 
 	printf("%f\t%f\t%f\t", 	meas.Accelerometer[0],
@@ -210,9 +223,9 @@ void IMU::Calibrate()
 	Measurement_t meas;
 	float avg_acc[3] = {0.0f, 0.0f, 0.0f};
 	float avg_gyro[3] = {0.0f, 0.0f, 0.0f};
+	float acc_scale[3] = {1.0f, 1.0f, 1.0f};
 
 	printf("Calibrating IMU\n");
-	vTaskDelay(10);
 
 	if(!isGyroscopeCalibrated())
 	{
@@ -230,7 +243,7 @@ void IMU::Calibrate()
 			printf("%f\n", meas.Gyroscope[2]);
 			vTaskDelay(1);
 		}
-		scale_f32(avg_gyro, 1.f/_numSamples, calibration_.gyro_bias, 3);
+		scale_f32(avg_gyro, 1.f/_numSamples, avg_gyro, 3);
 
 		if(CalibrateGyroTearDown())
 		{
@@ -262,19 +275,27 @@ void IMU::Calibrate()
 	}
 
 	calibrateImu(reference_acc_vector_, avg_acc, calibration_.imu_calibration_matrix);
-	SetCalibration(avg_acc, reference_acc_vector_,avg_gyro, calibration_.imu_calibration_matrix, false);
+	SetCalibration(avg_acc, acc_scale, avg_gyro, calibration_.imu_calibration_matrix, false);
 
 	printf("Resulting calibration matrix:\n");
-	printf("%f", calibration_.imu_calibration_matrix[0]); printf("\t");
-	printf("%f", calibration_.imu_calibration_matrix[1]); printf("\t");
-	printf("%f\n", calibration_.imu_calibration_matrix[2]);
-	printf("%f", calibration_.imu_calibration_matrix[3]); printf("\t");
-	printf("%f", calibration_.imu_calibration_matrix[4]); printf("\t");
-	printf("%f\n", calibration_.imu_calibration_matrix[5]);
-	printf("%f", calibration_.imu_calibration_matrix[6]); printf("\t");
-	printf("%f", calibration_.imu_calibration_matrix[7]); printf("\t");
-	printf("%f\n", calibration_.imu_calibration_matrix[8]);
+	printf("%f\t%f\t%f\n", 	calibration_.imu_calibration_matrix[0],
+							calibration_.imu_calibration_matrix[1],
+							calibration_.imu_calibration_matrix[2]);
+	printf("%f\t%f\t%f\n", 	calibration_.imu_calibration_matrix[3],
+							calibration_.imu_calibration_matrix[4],
+							calibration_.imu_calibration_matrix[5]);
+	printf("%f\t%f\t%f\n", 	calibration_.imu_calibration_matrix[6],
+							calibration_.imu_calibration_matrix[7],
+							calibration_.imu_calibration_matrix[8]);
 
+	printf("----------------------------------------\n");
+	printf("Acc Bias:\t");
+	printf("%f\t%f\t%f\n",calibration_.acc_bias[0],calibration_.acc_bias[1],calibration_.acc_bias[2]);
+	printf("Acc Scale:\t");
+	printf("%f\t%f\t%f\n",calibration_.acc_scale[0],calibration_.acc_scale[1],calibration_.acc_scale[2]);
+	printf("Gyro Bias:\t");
+	printf("%f\t%f\t%f\n",calibration_.gyro_bias[0],calibration_.gyro_bias[1],calibration_.gyro_bias[2]);
+	printf("----------------------------------------\n");
 	/* We have now calibrated, but we need to verify that the calibration is valid */
 	ValidateCalibration();
 
@@ -288,7 +309,7 @@ void IMU::Calibrate()
 void IMU::CalibrateAccelerometer()
 {
 	printf("Calibrating Accelerometer - tilt accelerometer slowly such that measurements are taken at all sides\n");
-	vTaskDelay(1000);
+	vTaskDelay(1);
 
 	float acc_min[3];
 	float acc_max[3];
@@ -356,11 +377,9 @@ void IMU::CalibrateAccelerometer()
 	ValidateCalibration();
 	if (!isAccelerometerCalibrated()) {
 		printf("Calibration failed: Could not validate calibration\n\n");
-		vTaskDelay(5000);
+		vTaskDelay(5000 / portTICK_PERIOD_MS);
 		return;
 	}
-
-	vTaskDelay(5000);
 }
 
 
@@ -411,12 +430,12 @@ void IMU::calibrateImu(	const float desired_acc_vector[3],
 
 	// Sine between vectors: s = ||v||
 	float s = vector_length(v);
-	printf("sin:\t%f\n", s);
+	printf("   sin:\t%f\n", s);
 
 	// Cosine between vectors: c = a . b
 	float c;
 	dot_prod_f32(a, d, 3, &c);
-	printf("cos:\t%f\n",c);
+	printf("   cos:\t%f\n\n",c);
 
 	// R = I + [v]_x + [v]_x^2 (1-c)/(s^2), where [v]_x is the skew-symmetric
 	// cross product matrix of v
@@ -457,18 +476,10 @@ void IMU::calibrateImu(	const float desired_acc_vector[3],
 	memcpy(calibration_matrix, R, 9*sizeof(R[0]));
 }
 
-void IMU::rotateImuMeasurement(float& gx, float& gy, float& gz,
-						  float& ax, float& ay, float& az,
-						  const float calibration_matrix[9])
+void IMU::rotateImuMeasurement(float& ax, float& ay, float& az, const float calibration_matrix[9])
 {
   matrix_instance_f32 R;
   mat_init_f32(&R, 3, 3, const_cast<float*>(calibration_matrix));
-
-  matrix_instance_f32 g;
-  float g_data[3] = {gx, gy, gz};
-  mat_init_f32(&g, 3, 1, g_data);
-  mat_mult_f32(&R, &g, &g);
-  gx = g_data[0]; gy = g_data[1]; gz = g_data[2];
 
   matrix_instance_f32 a;
   float a_data[3] = {ax, ay, az};
