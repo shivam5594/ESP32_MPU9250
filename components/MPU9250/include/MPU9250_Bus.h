@@ -24,7 +24,7 @@
 class MPU9250_Bus
 {
 	public:
-		static const int I2C_FREQUENCY = 1000000;			// 400 kHz
+		static const int I2C_FREQUENCY = 400000;			// 400 kHz
 		static const int SPI_LOW_FREQUENCY = 1000000;		// 1 MHz
 		static const int SPI_HIGH_FREQUENCY = 1000000;		// 10 MHz
 

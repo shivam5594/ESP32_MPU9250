@@ -371,48 +371,59 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	if( _bus->writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
 	// enable I2C master mode
 	if( _bus->writeRegister(USER_CTRL,I2C_MST_EN) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
 	// set the I2C bus speed to 400 kHz
 	if( _bus->writeRegister(I2C_MST_CTRL,I2C_MST_CLK) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
 	// set AK8963 to Power Down
 	writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN);
+	printf("*");
 
 	// reset the MPU9250
 	_bus->writeRegister(PWR_MGMNT_1,PWR_RESET);
 	//printf("Reset MPU9250.\n");
+	printf("*");
 
 	// wait for MPU-9250 to come back up
 	vTaskDelay(1);
 
 	// reset the AK8963
 	writeAK8963Register(AK8963_CNTL2,AK8963_RESET);
+	printf("*");
 
 	// select clock source to gyro
 	if( _bus->writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
 	// check the WHO AM I byte, expected value is 0x71 (decimal 113) OR 0x73 (decimal 115)
 	if( whoAmI() != 0x71 && whoAmI() != 0x73){
 		return ESP_FAIL;
 	}
+	printf("*");
 
 	// enable accelerometer and gyro
 	if( _bus->writeRegister(PWR_MGMNT_2,SEN_ENABLE) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
 	setAccelRange(accelRange);
+	printf("*");
 
 	setGyroRange(gyroRange);
+	printf("*");
 
 	// setting gyro bandwidth to 184Hz
 	if( _bus->writeRegister(CONFIG,GYRO_DLPF_184) )
@@ -420,6 +431,7 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 		return ESP_FAIL;
 	}
 	_bandwidth = DLPF_BANDWIDTH_184HZ;
+	printf("*");
 
 	// setting the sample rate divider to 0 as default
 	if( _bus->writeRegister(SMPDIV,0x00) )
@@ -427,36 +439,42 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 		return ESP_FAIL;
 	}
 	_srd = 0;
+	printf("*");
 
 	// enable I2C master mode
 	if( _bus->writeRegister(USER_CTRL,I2C_MST_EN) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
 	// set the I2C bus speed to 400 kHz
 	if( _bus->writeRegister(I2C_MST_CTRL,I2C_MST_CLK) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
 	// check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
 	if( whoAmIAK8963() != 72 ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
 	/* get the magnetometer calibration */
 	// set AK8963 to Power Down
 	if( writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
-	vTaskDelay(100); // long wait between AK8963 mode changes
+	vTaskDelay(2); // long wait between AK8963 mode changes
 
 	// set AK8963 to FUSE ROM access
 	if( writeAK8963Register(AK8963_CNTL1,AK8963_FUSE_ROM) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
-	vTaskDelay(100); // long wait between AK8963 mode changes
+	vTaskDelay(2); // long wait between AK8963 mode changes
 
 	// read the AK8963 ASA registers and compute magnetometer scale factors
 	readAK8963Registers(AK8963_ASA,sizeof(buff),&buff[0]);
@@ -468,22 +486,27 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 	if( writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
-	vTaskDelay(100); // long wait between AK8963 mode changes
+	vTaskDelay(2); // long wait between AK8963 mode changes
 
 	// set AK8963 to 16 bit resolution, 100 Hz update rate
 	if( writeAK8963Register(AK8963_CNTL1,AK8963_CNT_MEAS2) ){
 		return ESP_FAIL;
 	}
-	vTaskDelay(100); // long wait between AK8963 mode changes
+	printf("*");
+
+	vTaskDelay(2); // long wait between AK8963 mode changes
 
 	// select clock source to gyro
 	if( _bus->writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL) ){
 		return ESP_FAIL;
 	}
+	printf("*");
 
 	// instruct the MPU9250 to get 7 bytes of data from the AK8963 at the sample rate
 	readAK8963Registers(AK8963_HXL,sizeof(data),&data[0]);
+	printf("*\n");
 
 	//_bus->setBusHighSpeed();
 
