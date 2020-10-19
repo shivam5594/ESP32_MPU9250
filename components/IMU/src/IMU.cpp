@@ -151,16 +151,19 @@ bool IMU::isCalibrated()
 
 bool IMU::isAccelerometerCalibrated()
 {
+	printf("0x%x ", calibration_.acc_bias_valid && calibration_.acc_scale_valid);
 	return (calibration_.acc_bias_valid && calibration_.acc_scale_valid);
 }
 
 bool IMU::isGyroscopeCalibrated()
 {
+	printf("0x%x ", calibration_.gyro_bias_valid);
 	return calibration_.gyro_bias_valid;
 }
 
 bool IMU::isAlignmentCalibrated()
 {
+	printf("0x%x \n",calibration_.imu_calibration_matrix_valid);
 	return calibration_.imu_calibration_matrix_valid;
 }
 
@@ -185,7 +188,7 @@ void IMU::SetCalibration(const float accelerometer_bias[3], const float accelero
 //	}
 }
 
-void IMU::ReadAll(){
+void IMU::ReadAll_Raw(){
 	Measurement_t meas;
 	Get(meas);
 
@@ -193,9 +196,9 @@ void IMU::ReadAll(){
 							meas.Accelerometer[1],
 							meas.Accelerometer[2]);
 
-	printf("%f\t%f\t%f\t", 	meas.Gyroscope[0] * 57.296,
-							meas.Gyroscope[1] * 57.296,
-							meas.Gyroscope[2] * 57.296);
+	printf("%f\t%f\t%f\t", 	meas.Gyroscope[0],
+							meas.Gyroscope[1],
+							meas.Gyroscope[2]);
 
 	printf("%f\t%f\t%f\n", 	meas.Magnetometer[0],
 							meas.Magnetometer[1],
@@ -259,8 +262,7 @@ void IMU::Calibrate()
 	}
 
 	calibrateImu(reference_acc_vector_, avg_acc, calibration_.imu_calibration_matrix);
-	calibration_.imu_calibration_matrix_valid = true;
-	calibration_.gyro_bias_valid = true;
+	SetCalibration(avg_acc, reference_acc_vector_,avg_gyro, calibration_.imu_calibration_matrix, false);
 
 	printf("Resulting calibration matrix:\n");
 	printf("%f", calibration_.imu_calibration_matrix[0]); printf("\t");
@@ -275,6 +277,7 @@ void IMU::Calibrate()
 
 	/* We have now calibrated, but we need to verify that the calibration is valid */
 	ValidateCalibration();
+
 	if (!isCalibrated()) {
 		printf("Calibration failed: Could not validate calibration\n\n");
 		vTaskDelay(5000 / portTICK_PERIOD_MS);

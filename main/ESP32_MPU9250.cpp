@@ -52,7 +52,7 @@ extern "C" void app_main(void)
 	}
 
 	while(1){
-		imu->ReadAll();
+		imu->ReadAll_Raw();
 		vTaskDelay(portTICK_PERIOD_MS);
 	}
 

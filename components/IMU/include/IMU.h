@@ -66,7 +66,7 @@ class IMU
 		virtual void Get(Measurement_t& measurement) {};
 		virtual void GetEstimates(Estimates_t& estimates) {}; // if supported, eg. by Xsens IMU
 
-		void ReadAll();
+		void ReadAll_Raw();
 		void Calibrate();
 		virtual esp_err_t Configure();
 		void CalibrateAccelerometer();
