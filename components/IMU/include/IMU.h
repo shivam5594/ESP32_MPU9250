@@ -25,7 +25,7 @@
 #include "driver/i2c.h"
 #include "esp_log.h"
 
-#define TAG "Chakra"
+#define _TAG "Chakra"
 
 class IMU
 {

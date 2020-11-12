@@ -18,9 +18,11 @@
 
 #include "IMU.h"
 #include "MPU9250.h"
+#include "wifi_logger.h"
 
 extern "C" void app_main(void)
 {
+	start_wifi_logger(); // Start wifi logger
     esp_err_t ret = ESP_FAIL;
 
     i2c_port_t I2Cport = I2C_NUM_0;
@@ -38,11 +40,11 @@ extern "C" void app_main(void)
 	esp_err_t ret1 = i2c_master_cmd_begin(I2Cport, cmd, portMAX_DELAY);
 	i2c_cmd_link_delete(cmd);
 	if (ret1 == ESP_OK) {
-		ESP_LOGI(TAG, "Detected device at %02x\n", address);
+		ESP_LOGI(_TAG, "Detected device at %02x\n", address);
 	} else if (ret1 == ESP_ERR_TIMEOUT) {
-		ESP_LOGI(TAG, "UU ");
+		ESP_LOGI(_TAG, "UU ");
 	} else {
-		ESP_LOGI(TAG, "-- %d", ret1);
+		ESP_LOGI(_TAG, "-- %d", ret1);
 	}
 
 	if(ESP_OK == imu->Configure())
