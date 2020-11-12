@@ -23,6 +23,9 @@
 #include "freertos/FreeRTOS.h"
 #include "driver/spi_master.h"
 #include "driver/i2c.h"
+#include "esp_log.h"
+
+#define TAG "Chakra"
 
 class IMU
 {

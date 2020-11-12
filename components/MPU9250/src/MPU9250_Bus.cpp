@@ -55,7 +55,7 @@ esp_err_t MPU9250_I2C::writeRegister(uint8_t subAddress, uint8_t data){
 		return ESP_FAIL;
 	}
 
-	vTaskDelay(1); // need to slow down how fast I write to MPU9250
+	vTaskDelay(10); // need to slow down how fast I write to MPU9250
 
 	/* read back the register */
 	//buff = _bus->Read(subAddress);

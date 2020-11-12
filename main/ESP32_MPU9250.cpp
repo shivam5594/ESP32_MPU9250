@@ -38,11 +38,11 @@ extern "C" void app_main(void)
 	esp_err_t ret1 = i2c_master_cmd_begin(I2Cport, cmd, portMAX_DELAY);
 	i2c_cmd_link_delete(cmd);
 	if (ret1 == ESP_OK) {
-		printf("Detected device at %02x\n", address);
+		ESP_LOGI(TAG, "Detected device at %02x\n", address);
 	} else if (ret1 == ESP_ERR_TIMEOUT) {
-		printf("UU ");
+		ESP_LOGI(TAG, "UU ");
 	} else {
-		printf("-- %d", ret1);
+		ESP_LOGI(TAG, "-- %d", ret1);
 	}
 
 	if(ESP_OK == imu->Configure())
@@ -53,7 +53,7 @@ extern "C" void app_main(void)
 
 	while(1){
 		imu->Read_all_Corrected();
-		vTaskDelay(portTICK_PERIOD_MS);
+		vTaskDelay(10 / portTICK_PERIOD_MS);
 	}
 
 

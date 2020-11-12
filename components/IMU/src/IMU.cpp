@@ -188,15 +188,15 @@ void IMU::Read_all_Corrected(void)
 	CorrectMeasurement(meas, calibration_.acc_bias_valid, calibration_.acc_scale_valid,
 			calibration_.gyro_bias_valid, calibration_.imu_calibration_matrix_valid);
 
-	printf("%f\t%f\t%f\t", 	meas.Accelerometer[0],
+	ESP_LOGI(TAG, "%f\t%f\t%f\t", 	meas.Accelerometer[0],
 							meas.Accelerometer[1],
 							meas.Accelerometer[2]);
 
-	printf("%f\t%f\t%f\t", 	meas.Gyroscope[0],
+	ESP_LOGI(TAG, "%f\t%f\t%f\t", 	meas.Gyroscope[0],
 							meas.Gyroscope[1],
 							meas.Gyroscope[2]);
 
-	printf("%f\t%f\t%f\n", 	meas.Magnetometer[0],
+	ESP_LOGI(TAG, "%f\t%f\t%f\n", 	meas.Magnetometer[0],
 							meas.Magnetometer[1],
 							meas.Magnetometer[2]);
 
@@ -205,15 +205,15 @@ void IMU::Read_all_Corrected(void)
 void IMU::Read_all_Raw(void){
 	Get(meas);
 
-	printf("%f\t%f\t%f\t", 	meas.Accelerometer[0],
+	ESP_LOGI(TAG, "%f\t%f\t%f\t", 	meas.Accelerometer[0],
 							meas.Accelerometer[1],
 							meas.Accelerometer[2]);
 
-	printf("%f\t%f\t%f\t", 	meas.Gyroscope[0],
+	ESP_LOGI(TAG, "%f\t%f\t%f\t", 	meas.Gyroscope[0],
 							meas.Gyroscope[1],
 							meas.Gyroscope[2]);
 
-	printf("%f\t%f\t%f\n", 	meas.Magnetometer[0],
+	ESP_LOGI(TAG, "%f\t%f\t%f\n", 	meas.Magnetometer[0],
 							meas.Magnetometer[1],
 							meas.Magnetometer[2]);
 }
@@ -225,29 +225,29 @@ void IMU::Calibrate()
 	float avg_gyro[3] = {0.0f, 0.0f, 0.0f};
 	float acc_scale[3] = {1.0f, 1.0f, 1.0f};
 
-	printf("Calibrating IMU\n");
+	ESP_LOGI(TAG, "Calibrating IMU\n");
 
 	if(!isGyroscopeCalibrated())
 	{
 		if(CalibrateGyroSetup())
 		{
-			printf("Gyroscope calibration setup failed.\n");
+			ESP_LOGI(TAG, "Gyroscope calibration setup failed.\n");
 		}
 
-		printf("Getting "); printf("%d", _numSamples); printf(" gyro samples:\n");
+		ESP_LOGI(TAG, "Getting "); ESP_LOGI(TAG, "%d", _numSamples); ESP_LOGI(TAG, " gyro samples:\n");
 		for (int i = 0; i < _numSamples; ++i) {
 			Get(meas);
 			add_f32(meas.Gyroscope, avg_gyro, avg_gyro, 3);
-			printf("%f", meas.Gyroscope[0]); printf("\t");
-			printf("%f", meas.Gyroscope[1]); printf("\t");
-			printf("%f\n", meas.Gyroscope[2]);
-			vTaskDelay(1);
+			ESP_LOGI(TAG, "%f", meas.Gyroscope[0]); ESP_LOGI(TAG, "\t");
+			ESP_LOGI(TAG, "%f", meas.Gyroscope[1]); ESP_LOGI(TAG, "\t");
+			ESP_LOGI(TAG, "%f\n", meas.Gyroscope[2]);
+			vTaskDelay(10 / portTICK_PERIOD_MS);
 		}
 		scale_f32(avg_gyro, 1.f/_numSamples, avg_gyro, 3);
 
 		if(CalibrateGyroTearDown())
 		{
-			printf("Gyroscope calibration tear down failed.\n");
+			ESP_LOGI(TAG, "Gyroscope calibration tear down failed.\n");
 		}
 	}
 
@@ -255,52 +255,52 @@ void IMU::Calibrate()
 	{
 		if(CalibrateAccelSetup())
 		{
-			printf("Accelerometer calibration setup failed.\n");
+			ESP_LOGI(TAG, "Accelerometer calibration setup failed.\n");
 		}
-		printf("Getting "); printf("%d", _numSamples); printf(" accelerometer samples:\n");
+		ESP_LOGI(TAG, "Getting "); ESP_LOGI(TAG, "%d", _numSamples); ESP_LOGI(TAG, " accelerometer samples:\n");
 		for (int i = 0; i < _numSamples; ++i) {
 			Get(meas);
 			add_f32(meas.Accelerometer, avg_acc, avg_acc, 3);
-			printf("%f", meas.Accelerometer[0]); printf("\t");
-			printf("%f", meas.Accelerometer[1]); printf("\t");
-			printf("%f\n", meas.Accelerometer[2]);
-			vTaskDelay(1);
+			ESP_LOGI(TAG, "%f", meas.Accelerometer[0]); ESP_LOGI(TAG, "\t");
+			ESP_LOGI(TAG, "%f", meas.Accelerometer[1]); ESP_LOGI(TAG, "\t");
+			ESP_LOGI(TAG, "%f\n", meas.Accelerometer[2]);
+			vTaskDelay(10 / portTICK_PERIOD_MS);
 		}
 		scale_f32(avg_acc, 1.f/_numSamples, avg_acc, 3);
 
 		if(CalibrateAccelTearDown())
 		{
-			printf("Accelerometer calibration tear down failed.\n");
+			ESP_LOGI(TAG, "Accelerometer calibration tear down failed.\n");
 		}
 	}
 
 	calibrateImu(reference_acc_vector_, avg_acc, calibration_.imu_calibration_matrix);
 	SetCalibration(avg_acc, acc_scale, avg_gyro, calibration_.imu_calibration_matrix, false);
 
-	printf("Resulting calibration matrix:\n");
-	printf("%f\t%f\t%f\n", 	calibration_.imu_calibration_matrix[0],
+	ESP_LOGI(TAG, "Resulting calibration matrix:\n");
+	ESP_LOGI(TAG, "%f\t%f\t%f\n", 	calibration_.imu_calibration_matrix[0],
 							calibration_.imu_calibration_matrix[1],
 							calibration_.imu_calibration_matrix[2]);
-	printf("%f\t%f\t%f\n", 	calibration_.imu_calibration_matrix[3],
+	ESP_LOGI(TAG, "%f\t%f\t%f\n", 	calibration_.imu_calibration_matrix[3],
 							calibration_.imu_calibration_matrix[4],
 							calibration_.imu_calibration_matrix[5]);
-	printf("%f\t%f\t%f\n", 	calibration_.imu_calibration_matrix[6],
+	ESP_LOGI(TAG, "%f\t%f\t%f\n", 	calibration_.imu_calibration_matrix[6],
 							calibration_.imu_calibration_matrix[7],
 							calibration_.imu_calibration_matrix[8]);
 
-	printf("----------------------------------------\n");
-	printf("Acc Bias:\t");
-	printf("%f\t%f\t%f\n",calibration_.acc_bias[0],calibration_.acc_bias[1],calibration_.acc_bias[2]);
-	printf("Acc Scale:\t");
-	printf("%f\t%f\t%f\n",calibration_.acc_scale[0],calibration_.acc_scale[1],calibration_.acc_scale[2]);
-	printf("Gyro Bias:\t");
-	printf("%f\t%f\t%f\n",calibration_.gyro_bias[0],calibration_.gyro_bias[1],calibration_.gyro_bias[2]);
-	printf("----------------------------------------\n");
+	ESP_LOGI(TAG, "----------------------------------------\n");
+	ESP_LOGI(TAG, "Acc Bias:\t");
+	ESP_LOGI(TAG, "%f\t%f\t%f\n",calibration_.acc_bias[0],calibration_.acc_bias[1],calibration_.acc_bias[2]);
+	ESP_LOGI(TAG, "Acc Scale:\t");
+	ESP_LOGI(TAG, "%f\t%f\t%f\n",calibration_.acc_scale[0],calibration_.acc_scale[1],calibration_.acc_scale[2]);
+	ESP_LOGI(TAG, "Gyro Bias:\t");
+	ESP_LOGI(TAG, "%f\t%f\t%f\n",calibration_.gyro_bias[0],calibration_.gyro_bias[1],calibration_.gyro_bias[2]);
+	ESP_LOGI(TAG, "----------------------------------------\n");
 	/* We have now calibrated, but we need to verify that the calibration is valid */
 	ValidateCalibration();
 
 	if (!isCalibrated()) {
-		printf("Calibration failed: Could not validate calibration\n\n");
+		ESP_LOGI(TAG, "Calibration failed: Could not validate calibration\n\n");
 		vTaskDelay(5000 / portTICK_PERIOD_MS);
 		return;
 	}
@@ -308,8 +308,8 @@ void IMU::Calibrate()
 
 void IMU::CalibrateAccelerometer()
 {
-	printf("Calibrating Accelerometer - tilt accelerometer slowly such that measurements are taken at all sides\n");
-	vTaskDelay(1);
+	ESP_LOGI(TAG, "Calibrating Accelerometer - tilt accelerometer slowly such that measurements are taken at all sides\n");
+	vTaskDelay(10 / portTICK_PERIOD_MS);
 
 	float acc_min[3];
 	float acc_max[3];
@@ -354,14 +354,14 @@ void IMU::CalibrateAccelerometer()
 		}
 
 		if (steadyCount == 0)
-			printf(" === MOVE SLOWLY ===\n");
+			ESP_LOGI(TAG, " === MOVE SLOWLY ===\n");
 		else
-			printf(" === CALIBRATING ===\n");
-		printf("Accelerometer min: {  %.2f,  %.2f,  %.2f  }\n", acc_min[0], acc_min[1], acc_min[2]);
-		printf("Accelerometer max: {  %.2f,  %.2f,  %.2f  }\n", acc_max[0], acc_max[1], acc_max[2]);
-		printf("Accelerometer bias: {  %.2f,  %.2f,  %.2f  }\n", calibration_.acc_bias[0], calibration_.acc_bias[1], calibration_.acc_bias[2]);
-		printf("Accelerometer scale: {  %.2f,  %.2f,  %.2f  }\n", calibration_.acc_scale[0], calibration_.acc_scale[1], calibration_.acc_scale[2]);
-		printf("\n");
+			ESP_LOGI(TAG, " === CALIBRATING ===\n");
+		ESP_LOGI(TAG, "Accelerometer min: {  %.2f,  %.2f,  %.2f  }\n", acc_min[0], acc_min[1], acc_min[2]);
+		ESP_LOGI(TAG, "Accelerometer max: {  %.2f,  %.2f,  %.2f  }\n", acc_max[0], acc_max[1], acc_max[2]);
+		ESP_LOGI(TAG, "Accelerometer bias: {  %.2f,  %.2f,  %.2f  }\n", calibration_.acc_bias[0], calibration_.acc_bias[1], calibration_.acc_bias[2]);
+		ESP_LOGI(TAG, "Accelerometer scale: {  %.2f,  %.2f,  %.2f  }\n", calibration_.acc_scale[0], calibration_.acc_scale[1], calibration_.acc_scale[2]);
+		ESP_LOGI(TAG, "\n");
 
 		vTaskDelay(1000/ACCELEROMETER_CALIBRATION_SAMPLE_RATE);
 	}
@@ -369,14 +369,14 @@ void IMU::CalibrateAccelerometer()
 	calibration_.acc_bias_valid = true;
 	calibration_.acc_scale_valid = true;
 
-	printf(" === Finished accelerometer calibration ===\n");
-	printf("Accelerometer bias: {  %.7f,  %.7f,  %.7f  }\n", calibration_.acc_bias[0], calibration_.acc_bias[1], calibration_.acc_bias[2]);
-	printf("Accelerometer scale: {  %.7f,  %.7f,  %.7f  }\n", calibration_.acc_scale[0], calibration_.acc_scale[1], calibration_.acc_scale[2]);
+	ESP_LOGI(TAG, " === Finished accelerometer calibration ===\n");
+	ESP_LOGI(TAG, "Accelerometer bias: {  %.7f,  %.7f,  %.7f  }\n", calibration_.acc_bias[0], calibration_.acc_bias[1], calibration_.acc_bias[2]);
+	ESP_LOGI(TAG, "Accelerometer scale: {  %.7f,  %.7f,  %.7f  }\n", calibration_.acc_scale[0], calibration_.acc_scale[1], calibration_.acc_scale[2]);
 
 	/* We have now calibrated, but we need to verify that the calibration is valid */
 	ValidateCalibration();
 	if (!isAccelerometerCalibrated()) {
-		printf("Calibration failed: Could not validate calibration\n\n");
+		ESP_LOGI(TAG, "Calibration failed: Could not validate calibration\n\n");
 		vTaskDelay(5000 / portTICK_PERIOD_MS);
 		return;
 	}
@@ -392,31 +392,31 @@ void IMU::calibrateImu(	const float desired_acc_vector[3],
 						const float actual_acc_vector[3],
 						float calibration_matrix[9])
 {
-	printf("\n----------------------------------------\n");
+	ESP_LOGI(TAG, "\n----------------------------------------\n");
 	// Scale vectors to unity
 	// scale_f32 does not take a const vector, but it does not modify the
 	// source vector (hence the const_cast)
-	printf("desired_acc_vector:\t\t%f\t%f\t%f\n", desired_acc_vector[0],
+	ESP_LOGI(TAG, "desired_acc_vector:\t\t%f\t%f\t%f\n", desired_acc_vector[0],
 											  desired_acc_vector[1],
 											  desired_acc_vector[2]);
 
 	float len_des = vector_length(desired_acc_vector);
-	printf("Length of desired vector:\t%f\n",len_des);
+	ESP_LOGI(TAG, "Length of desired vector:\t%f\n",len_des);
 	float d[3];
 	scale_f32(const_cast<float*>(desired_acc_vector), 1.f/len_des, d, 3);
-	printf("Scaled Desired:\t\t\t%f\t%f\t%f\n\n",d[0],
+	ESP_LOGI(TAG, "Scaled Desired:\t\t\t%f\t%f\t%f\n\n",d[0],
 											 d[1],
 											 d[2]);
 
-	printf("actual_acc_vector:\t\t%f\t%f\t%f\n", actual_acc_vector[0],
+	ESP_LOGI(TAG, "actual_acc_vector:\t\t%f\t%f\t%f\n", actual_acc_vector[0],
 											 actual_acc_vector[1],
 											 actual_acc_vector[2]);
 
 	float len_act = vector_length(actual_acc_vector);
-	printf("Length of actual vector:\t%f\n",len_act);
+	ESP_LOGI(TAG, "Length of actual vector:\t%f\n",len_act);
 	float a[3];
 	scale_f32(const_cast<float*>(actual_acc_vector), 1.f/len_act, a, 3);
-	printf("Scaled Actual:\t\t\t%f\t%f\t%f\n\n",a[0],
+	ESP_LOGI(TAG, "Scaled Actual:\t\t\t%f\t%f\t%f\n\n",a[0],
 											a[1],
 											a[2]);
 	// Find rotation matrix R between vectors, s.t. Ra=d
@@ -426,16 +426,16 @@ void IMU::calibrateImu(	const float desired_acc_vector[3],
 	float v[3] = {a[1]*d[2]-a[2]*d[1],
 				  a[2]*d[0]-a[0]*d[2],
 				  a[0]*d[1]-a[1]*d[0]};
-	printf("x prod:\t%f\t%f\t%f\n",v[0],v[1],v[2]);
+	ESP_LOGI(TAG, "x prod:\t%f\t%f\t%f\n",v[0],v[1],v[2]);
 
 	// Sine between vectors: s = ||v||
 	float s = vector_length(v);
-	printf("   sin:\t%f\n", s);
+	ESP_LOGI(TAG, "   sin:\t%f\n", s);
 
 	// Cosine between vectors: c = a . b
 	float c;
 	dot_prod_f32(a, d, 3, &c);
-	printf("   cos:\t%f\n\n",c);
+	ESP_LOGI(TAG, "   cos:\t%f\n\n",c);
 
 	// R = I + [v]_x + [v]_x^2 (1-c)/(s^2), where [v]_x is the skew-symmetric
 	// cross product matrix of v
