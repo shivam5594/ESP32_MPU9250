@@ -6,8 +6,11 @@ This code communicated ESP32 with MPU9250 over I2C bus. I am using ESP32-Cam boa
 
 - I2C communication is estrablished and able to read and write registers.
 - Working on Calibration, unable to calibrate.
+- Wifi logging is enabled for Websocket, TCP and UDP.
 
 ## Future work
 
 - Add SPI support
-- Add Wi-Fi telemetry 
+
+## How to use
+`git clone --recurse-submodules https://github.com/shivam5594/ESP32_MPU9250`
