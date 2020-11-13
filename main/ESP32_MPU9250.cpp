@@ -54,7 +54,16 @@ extern "C" void app_main(void)
 	}
 
 	while(1){
-		imu->Read_all_Corrected();
+		imu->update();
+		ESP_LOGI(_TAG, "%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t", 	imu->getAccelX_mss(),
+				imu->getAccelY_mss(),
+				imu->getAccelZ_mss(),
+				imu->getGyroX_rads(),
+				imu->getGyroY_rads(),
+				imu->getGyroZ_rads(),
+				imu->getMagX_uT(),
+				imu->getMagY_uT(),
+				imu->getMagZ_uT());
 		vTaskDelay(10 / portTICK_PERIOD_MS);
 	}
 

@@ -69,8 +69,16 @@ public:
 	virtual void Get(Measurement_t& measurement) {};
 	virtual void GetEstimates(Estimates_t& estimates) {}; // if supported, eg. by Xsens IMU
 
-	void Read_all_Raw(void);
-	void Read_all_Corrected(void);
+	void update(bool correct = false);
+	float getAccelX_mss();
+	float getAccelY_mss();
+	float getAccelZ_mss();
+	float getGyroX_rads();
+	float getGyroY_rads();
+	float getGyroZ_rads();
+	float getMagX_uT();
+	float getMagY_uT();
+	float getMagZ_uT();
 	void Calibrate();
 	virtual esp_err_t Configure();
 	void CalibrateAccelerometer();

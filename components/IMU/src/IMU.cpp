@@ -183,13 +183,15 @@ void IMU::SetCalibration(const float accelerometer_bias[3], const float accelero
 	//	}
 }
 
-void IMU::Read_all_Corrected(void)
+void IMU::update(bool correct)
 {
 	Get(meas);
-	CorrectMeasurement(meas, calibration_.acc_bias_valid, calibration_.acc_scale_valid,
-			calibration_.gyro_bias_valid, calibration_.imu_calibration_matrix_valid);
 
-	ESP_LOGI(_TAG, "%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t", 	meas.Accelerometer[0],
+	if(correct)
+		CorrectMeasurement(meas, calibration_.acc_bias_valid, calibration_.acc_scale_valid,
+				calibration_.gyro_bias_valid, calibration_.imu_calibration_matrix_valid);
+
+/*	ESP_LOGI(_TAG, "%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t", 	meas.Accelerometer[0],
 			meas.Accelerometer[1],
 			meas.Accelerometer[2],
 			meas.Gyroscope[0],
@@ -197,22 +199,53 @@ void IMU::Read_all_Corrected(void)
 			meas.Gyroscope[2],
 			meas.Magnetometer[0],
 			meas.Magnetometer[1],
-			meas.Magnetometer[2]);
+			meas.Magnetometer[2]);*/
 
 }
 
-void IMU::Read_all_Raw(void){
-	Get(meas);
+float IMU::getAccelX_mss()
+{
+	return meas.Accelerometer[0];
+}
 
-	ESP_LOGI(_TAG, "%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t", 	meas.Accelerometer[0],
-			meas.Accelerometer[1],
-			meas.Accelerometer[2],
-			meas.Gyroscope[0],
-			meas.Gyroscope[1],
-			meas.Gyroscope[2],
-			meas.Magnetometer[0],
-			meas.Magnetometer[1],
-			meas.Magnetometer[2]);
+float IMU::getAccelY_mss()
+{
+	return meas.Accelerometer[1];
+}
+
+float IMU::getAccelZ_mss()
+{
+	return meas.Accelerometer[2];
+}
+
+float IMU::getGyroX_rads()
+{
+	return meas.Gyroscope[0];
+}
+
+float IMU::getGyroY_rads()
+{
+	return meas.Gyroscope[1];
+}
+
+float IMU::getGyroZ_rads()
+{
+	return meas.Gyroscope[2];
+}
+
+float IMU::getMagX_uT()
+{
+	return meas.Magnetometer[0];
+}
+
+float IMU::getMagY_uT()
+{
+	return meas.Magnetometer[1];
+}
+
+float IMU::getMagZ_uT()
+{
+	return meas.Magnetometer[2];
 }
 
 void IMU::Calibrate()
