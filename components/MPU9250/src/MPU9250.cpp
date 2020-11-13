@@ -20,7 +20,7 @@ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR P
 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
+ */
 
 /* Modified version for use in STM32H7 project by
  * ------------------------------------------
@@ -129,41 +129,41 @@ uint32_t MPU9250::WaitForNewData(uint32_t xTicksToWait) // blocking call
 
 esp_err_t MPU9250::setAccelRange(mpu9250_accel_range accelRange)
 {
-/* setup the accel and gyro ranges */
+	/* setup the accel and gyro ranges */
 	switch(accelRange)
 	{
 
-		case ACCEL_RANGE_2G:
-			// setting the accel range to 2G
-			if( _bus->writeRegister(ACCEL_CONFIG,ACCEL_FS_SEL_2G) ){
-				return ESP_FAIL;
-			}
-			_accelScale = G * 2.0f/32767.5f; // setting the accel scale to 2G
-			break;
+	case ACCEL_RANGE_2G:
+		// setting the accel range to 2G
+		if( _bus->writeRegister(ACCEL_CONFIG,ACCEL_FS_SEL_2G) ){
+			return ESP_FAIL;
+		}
+		_accelScale = G * 2.0f/32767.5f; // setting the accel scale to 2G
+		break;
 
-		case ACCEL_RANGE_4G:
-			// setting the accel range to 4G
-			if( _bus->writeRegister(ACCEL_CONFIG,ACCEL_FS_SEL_4G) ){
-				return ESP_FAIL;
-			}
-			_accelScale = G * 4.0f/32767.5f; // setting the accel scale to 4G
-			break;
+	case ACCEL_RANGE_4G:
+		// setting the accel range to 4G
+		if( _bus->writeRegister(ACCEL_CONFIG,ACCEL_FS_SEL_4G) ){
+			return ESP_FAIL;
+		}
+		_accelScale = G * 4.0f/32767.5f; // setting the accel scale to 4G
+		break;
 
-		case ACCEL_RANGE_8G:
-			// setting the accel range to 8G
-			if( _bus->writeRegister(ACCEL_CONFIG,ACCEL_FS_SEL_8G) ){
-				return ESP_FAIL;
-			}
-			_accelScale = G * 8.0f/32767.5f; // setting the accel scale to 8G
-			break;
+	case ACCEL_RANGE_8G:
+		// setting the accel range to 8G
+		if( _bus->writeRegister(ACCEL_CONFIG,ACCEL_FS_SEL_8G) ){
+			return ESP_FAIL;
+		}
+		_accelScale = G * 8.0f/32767.5f; // setting the accel scale to 8G
+		break;
 
-		case ACCEL_RANGE_16G:
-			// setting the accel range to 16G
-			if( _bus->writeRegister(ACCEL_CONFIG,ACCEL_FS_SEL_16G) ){
-				return ESP_FAIL;
-			}
-			_accelScale = G * 16.0f/32767.5f; // setting the accel scale to 16G
-			break;
+	case ACCEL_RANGE_16G:
+		// setting the accel range to 16G
+		if( _bus->writeRegister(ACCEL_CONFIG,ACCEL_FS_SEL_16G) ){
+			return ESP_FAIL;
+		}
+		_accelScale = G * 16.0f/32767.5f; // setting the accel scale to 16G
+		break;
 	}
 
 	_accelRange = accelRange;
@@ -175,37 +175,37 @@ esp_err_t MPU9250::setGyroRange(mpu9250_gyro_range gyroRange)
 {
 	switch(gyroRange)
 	{
-		case GYRO_RANGE_250DPS:
-			// setting the gyro range to 250DPS
-			if( _bus->writeRegister(GYRO_CONFIG,GYRO_FS_SEL_250DPS) ){
-				return ESP_FAIL;
-			}
-			_gyroScale = 250.0f/32767.5f * _d2r; // setting the gyro scale to 250DPS
-			break;
+	case GYRO_RANGE_250DPS:
+		// setting the gyro range to 250DPS
+		if( _bus->writeRegister(GYRO_CONFIG,GYRO_FS_SEL_250DPS) ){
+			return ESP_FAIL;
+		}
+		_gyroScale = 250.0f/32767.5f * _d2r; // setting the gyro scale to 250DPS
+		break;
 
-		case GYRO_RANGE_500DPS:
-			// setting the gyro range to 500DPS
-			if( _bus->writeRegister(GYRO_CONFIG,GYRO_FS_SEL_500DPS) ){
-				return ESP_FAIL;
-			}
-			_gyroScale = 500.0f/32767.5f * _d2r; // setting the gyro scale to 500DPS
-			break;
+	case GYRO_RANGE_500DPS:
+		// setting the gyro range to 500DPS
+		if( _bus->writeRegister(GYRO_CONFIG,GYRO_FS_SEL_500DPS) ){
+			return ESP_FAIL;
+		}
+		_gyroScale = 500.0f/32767.5f * _d2r; // setting the gyro scale to 500DPS
+		break;
 
-		case GYRO_RANGE_1000DPS:
-			// setting the gyro range to 1000DPS
-			if( _bus->writeRegister(GYRO_CONFIG,GYRO_FS_SEL_1000DPS) ){
-				return ESP_FAIL;
-			}
-			_gyroScale = 1000.0f/32767.5f * _d2r; // setting the gyro scale to 1000DPS
-			break;
+	case GYRO_RANGE_1000DPS:
+		// setting the gyro range to 1000DPS
+		if( _bus->writeRegister(GYRO_CONFIG,GYRO_FS_SEL_1000DPS) ){
+			return ESP_FAIL;
+		}
+		_gyroScale = 1000.0f/32767.5f * _d2r; // setting the gyro scale to 1000DPS
+		break;
 
-		case GYRO_RANGE_2000DPS:
-			// setting the gyro range to 2000DPS
-			if( _bus->writeRegister(GYRO_CONFIG,GYRO_FS_SEL_2000DPS) ){
-				return ESP_FAIL;
-			}
-			_gyroScale = 2000.0f/32767.5f * _d2r; // setting the gyro scale to 2000DPS
-			break;
+	case GYRO_RANGE_2000DPS:
+		// setting the gyro range to 2000DPS
+		if( _bus->writeRegister(GYRO_CONFIG,GYRO_FS_SEL_2000DPS) ){
+			return ESP_FAIL;
+		}
+		_gyroScale = 2000.0f/32767.5f * _d2r; // setting the gyro scale to 2000DPS
+		break;
 	}
 
 	_gyroRange = gyroRange;
@@ -218,10 +218,10 @@ esp_err_t MPU9250::setDlpfBandwidth(mpu9250_dlpf_bandwidth bandwidth) {
 	switch(bandwidth)
 	{
 	case DLPF_BANDWIDTH_250HZ: {
-		ESP_LOGI(_TAG, "INVALID DLPF BANDWIDTH (250HZ) for Accelerometer. Left unchanged.\n");
+		ESP_LOGI(_TAG, "INVALID DLPF BANDWIDTH (250HZ) for Accelerometer. Left unchanged.");
 
 		if(_bus->writeRegister(CONFIG,GYRO_DLPF_184)){ // setting gyro bandwidth to 184Hz
-				return ESP_FAIL;
+			return ESP_FAIL;
 		}
 		break;
 	}
@@ -232,7 +232,7 @@ esp_err_t MPU9250::setDlpfBandwidth(mpu9250_dlpf_bandwidth bandwidth) {
 		if(_bus->writeRegister(CONFIG,GYRO_DLPF_184)){ // setting gyro bandwidth to 184Hz
 			return ESP_FAIL;
 		}
-	break;
+		break;
 	}
 	case DLPF_BANDWIDTH_92HZ: {
 		if(_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_92)){ // setting accel bandwidth to 92Hz
@@ -241,7 +241,7 @@ esp_err_t MPU9250::setDlpfBandwidth(mpu9250_dlpf_bandwidth bandwidth) {
 		if(_bus->writeRegister(CONFIG,GYRO_DLPF_92)){ // setting gyro bandwidth to 92Hz
 			return ESP_FAIL;
 		}
-	break;
+		break;
 	}
 	case DLPF_BANDWIDTH_41HZ: {
 		if(_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_41)){ // setting accel bandwidth to 41Hz
@@ -250,7 +250,7 @@ esp_err_t MPU9250::setDlpfBandwidth(mpu9250_dlpf_bandwidth bandwidth) {
 		if(_bus->writeRegister(CONFIG,GYRO_DLPF_41)){ // setting gyro bandwidth to 41Hz
 			return ESP_FAIL;
 		}
-	break;
+		break;
 	}
 	case DLPF_BANDWIDTH_20HZ: {
 		if(_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_20)){ // setting accel bandwidth to 20Hz
@@ -306,7 +306,7 @@ esp_err_t MPU9250::setSrd(uint8_t srd) {
 	{
 		// set AK8963 to Power Down
 		if(writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN)){
-		  return ESP_FAIL;
+			return ESP_FAIL;
 		}
 		vTaskDelay(100 / portTICK_PERIOD_MS); // long wait between AK8963 mode changes
 
@@ -348,10 +348,10 @@ esp_err_t MPU9250::Configure()
 {
 	if (!isConfigured)
 	{
-		ESP_LOGI(_TAG, "Configuring IMU.\n");
+		ESP_LOGI(_TAG, "Configuring IMU.");
 		if (Configure(ACCEL_RANGE_16G, GYRO_RANGE_2000DPS))
 		{
-			ESP_LOGI(_TAG, "IMU is not configured.\n");
+			ESP_LOGI(_TAG, "IMU is not configured.");
 			return ESP_FAIL;
 		}
 	}
@@ -391,7 +391,7 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 
 	// reset the MPU9250
 	_bus->writeRegister(PWR_MGMNT_1,PWR_RESET);
-	//ESP_LOGI(_TAG, "Reset MPU9250.\n");
+	//ESP_LOGI(_TAG, "Reset MPU9250.");
 	ESP_LOGI(_TAG, "*");
 
 	// wait for MPU-9250 to come back up
@@ -506,7 +506,7 @@ esp_err_t MPU9250::Configure(mpu9250_accel_range accelRange, mpu9250_gyro_range 
 
 	// instruct the MPU9250 to get 7 bytes of data from the AK8963 at the sample rate
 	readAK8963Registers(AK8963_HXL,sizeof(data),&data[0]);
-	ESP_LOGI(_TAG, "*\n");
+	ESP_LOGI(_TAG, "*");
 
 	//_bus->setBusHighSpeed();
 
@@ -523,101 +523,101 @@ int MPU9250::setFilt(mpu9250_dlpf_bandwidth accel_bandwidth, mpu9250_dlpf_bandwi
 	//_bus->setBusLowSpeed();
 
 	switch(accel_bandwidth) {
-		case DLPF_BANDWIDTH_184HZ:
-			if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_184) ){ // setting accel bandwidth to 184Hz
-				return -1;
-			}
-			break;
+	case DLPF_BANDWIDTH_184HZ:
+		if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_184) ){ // setting accel bandwidth to 184Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_92HZ:
-			if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_92) ){ // setting accel bandwidth to 92Hz
-				return -1;
-			}
-			break;
+	case DLPF_BANDWIDTH_92HZ:
+		if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_92) ){ // setting accel bandwidth to 92Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_41HZ:
-			if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_41) ){ // setting accel bandwidth to 41Hz
-				return -1;
-			}
-			break;
+	case DLPF_BANDWIDTH_41HZ:
+		if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_41) ){ // setting accel bandwidth to 41Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_20HZ:
-			if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_20) ){ // setting accel bandwidth to 20Hz
-				return -1;
-			}
-			break;
+	case DLPF_BANDWIDTH_20HZ:
+		if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_20) ){ // setting accel bandwidth to 20Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_10HZ:
-			if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_10) ){ // setting accel bandwidth to 10Hz
-				return -1;
-			}
-			break;
+	case DLPF_BANDWIDTH_10HZ:
+		if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_10) ){ // setting accel bandwidth to 10Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_5HZ:
-			if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_5) ){ // setting accel bandwidth to 5Hz
-				return -1;
-			}
-			break;
+	case DLPF_BANDWIDTH_5HZ:
+		if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_5) ){ // setting accel bandwidth to 5Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_OFF:
-			if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_OFF) ){ // setting accel bandwidth to 460Hz
-				return -1;
-			}
-			break;
+	case DLPF_BANDWIDTH_OFF:
+		if( !_bus->writeRegister(ACCEL_CONFIG2,ACCEL_DLPF_OFF) ){ // setting accel bandwidth to 460Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_250HZ: // incorrect setting
-				return -1;
-			break;
+	case DLPF_BANDWIDTH_250HZ: // incorrect setting
+		return -1;
+		break;
 	}
 
 	switch(gyro_bandwidth) {
-		case DLPF_BANDWIDTH_250HZ:
-			if( !_bus->writeRegister(CONFIG,GYRO_DLPF_250) ){ // setting gyro bandwidth to 184Hz
-				return -1;
-			}
-			break;
+	case DLPF_BANDWIDTH_250HZ:
+		if( !_bus->writeRegister(CONFIG,GYRO_DLPF_250) ){ // setting gyro bandwidth to 184Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_184HZ:
-				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_184) ){ // setting gyro bandwidth to 184Hz
-					return -1;
-				}
-				break;
+	case DLPF_BANDWIDTH_184HZ:
+		if( !_bus->writeRegister(CONFIG,GYRO_DLPF_184) ){ // setting gyro bandwidth to 184Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_92HZ:
-				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_92) ){ // setting gyro bandwidth to 92Hz
-					return -1;
-				}
-				break;
+	case DLPF_BANDWIDTH_92HZ:
+		if( !_bus->writeRegister(CONFIG,GYRO_DLPF_92) ){ // setting gyro bandwidth to 92Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_41HZ:
-				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_41) ){ // setting gyro bandwidth to 41Hz
-					return -1;
-				}
-				break;
+	case DLPF_BANDWIDTH_41HZ:
+		if( !_bus->writeRegister(CONFIG,GYRO_DLPF_41) ){ // setting gyro bandwidth to 41Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_20HZ:
-				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_20) ){ // setting gyro bandwidth to 20Hz
-					return -1;
-				}
-				break;
+	case DLPF_BANDWIDTH_20HZ:
+		if( !_bus->writeRegister(CONFIG,GYRO_DLPF_20) ){ // setting gyro bandwidth to 20Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_10HZ:
-				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_10) ){ // setting gyro bandwidth to 10Hz
-					return -1;
-				}
-				break;
+	case DLPF_BANDWIDTH_10HZ:
+		if( !_bus->writeRegister(CONFIG,GYRO_DLPF_10) ){ // setting gyro bandwidth to 10Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_5HZ:
-				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_5) ){ // setting gyro bandwidth to 5Hz
-					return -1;
-				}
-				break;
+	case DLPF_BANDWIDTH_5HZ:
+		if( !_bus->writeRegister(CONFIG,GYRO_DLPF_5) ){ // setting gyro bandwidth to 5Hz
+			return -1;
+		}
+		break;
 
-		case DLPF_BANDWIDTH_OFF:
-				if( !_bus->writeRegister(CONFIG,GYRO_DLPF_OFF) ){ // setting gyro bandwidth to 5Hz
-					return -1;
-				}
-				break;
+	case DLPF_BANDWIDTH_OFF:
+		if( !_bus->writeRegister(CONFIG,GYRO_DLPF_OFF) ){ // setting gyro bandwidth to 5Hz
+			return -1;
+		}
+		break;
 	}
 
 	/* setting the sample rate divider */
@@ -889,7 +889,7 @@ void MPU9250::getMotion9Counts(int16_t* ax, int16_t* ay, int16_t* az, int16_t* g
 	}
 	else
 	{
-		ESP_LOGI(_TAG, "Bus not initialized.\n");
+		ESP_LOGI(_TAG, "Bus not initialized.");
 	}
 
 	axx = (((int16_t)buff[0]) << 8) | buff[1];  // combine into 16 bit values
@@ -1002,11 +1002,11 @@ esp_err_t MPU9250::writeAK8963Register(uint8_t subAddress, uint8_t data){
 	readAK8963Registers(subAddress, sizeof(buff), &buff[0]);
 
 	if(buff[0] == data) {
-  		return ESP_OK;
-  	}
-  	else{
-  		return ESP_FAIL;
-  	}
+		return ESP_OK;
+	}
+	else{
+		return ESP_FAIL;
+	}
 }
 
 /* reads registers from the AK8963 */
@@ -1049,121 +1049,121 @@ uint8_t MPU9250::whoAmIAK8963(){
 // From https://github.com/kriswiner/ESP8285/blob/master/MPU9250/MPU9250_MS5637_BasicAHRS2_ESP8266.ino
 void MPU9250::SelfTest(float result[6]) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
 {
-   uint8_t rawData[6] = {0, 0, 0, 0, 0, 0};
-   uint8_t selfTest[6];
-   int32_t gAvg[3] = {0}, aAvg[3] = {0}, aSTAvg[3] = {0}, gSTAvg[3] = {0};
-   float factoryTrim[6];
-   uint8_t FS = 0;
+	uint8_t rawData[6] = {0, 0, 0, 0, 0, 0};
+	uint8_t selfTest[6];
+	int32_t gAvg[3] = {0}, aAvg[3] = {0}, aSTAvg[3] = {0}, gSTAvg[3] = {0};
+	float factoryTrim[6];
+	uint8_t FS = 0;
 
-   //_bus->setBusLowSpeed();
+	//_bus->setBusLowSpeed();
 
-  _bus->writeRegister(SMPDIV, 0x00);    // Set gyro sample rate to 1 kHz
-  _bus->writeRegister(CONFIG, 0x02);        // Set gyro sample rate to 1 kHz and DLPF to 92 Hz
-  _bus->writeRegister(GYRO_CONFIG, FS<<3);  // Set full scale range for the gyro to 250 dps
-  _bus->writeRegister(ACCEL_CONFIG2, 0x02); // Set accelerometer rate to 1 kHz and bandwidth to 92 Hz
-  _bus->writeRegister(ACCEL_CONFIG, FS<<3); // Set full scale range for the accelerometer to 2 g
+	_bus->writeRegister(SMPDIV, 0x00);    // Set gyro sample rate to 1 kHz
+	_bus->writeRegister(CONFIG, 0x02);        // Set gyro sample rate to 1 kHz and DLPF to 92 Hz
+	_bus->writeRegister(GYRO_CONFIG, FS<<3);  // Set full scale range for the gyro to 250 dps
+	_bus->writeRegister(ACCEL_CONFIG2, 0x02); // Set accelerometer rate to 1 kHz and bandwidth to 92 Hz
+	_bus->writeRegister(ACCEL_CONFIG, FS<<3); // Set full scale range for the accelerometer to 2 g
 
-  for( int ii = 0; ii < 200; ii++) {  // get average current values of gyro and acclerometer
-	  _bus->readRegisters(ACCEL_OUT, sizeof(rawData), &rawData[0]); // Read the six raw data registers into data array
-	  aAvg[0] += (int16_t)(((int16_t)rawData[0] << 8) | rawData[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
-	  aAvg[1] += (int16_t)(((int16_t)rawData[2] << 8) | rawData[3]) ;
-	  aAvg[2] += (int16_t)(((int16_t)rawData[4] << 8) | rawData[5]) ;
+	for( int ii = 0; ii < 200; ii++) {  // get average current values of gyro and acclerometer
+		_bus->readRegisters(ACCEL_OUT, sizeof(rawData), &rawData[0]); // Read the six raw data registers into data array
+		aAvg[0] += (int16_t)(((int16_t)rawData[0] << 8) | rawData[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
+		aAvg[1] += (int16_t)(((int16_t)rawData[2] << 8) | rawData[3]) ;
+		aAvg[2] += (int16_t)(((int16_t)rawData[4] << 8) | rawData[5]) ;
 
-	  _bus->readRegisters(GYRO_OUT, sizeof(rawData), &rawData[0]); // Read the six raw data registers sequentially into data array
-	  gAvg[0] += (int16_t)(((int16_t)rawData[0] << 8) | rawData[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
-	  gAvg[1] += (int16_t)(((int16_t)rawData[2] << 8) | rawData[3]) ;
-	  gAvg[2] += (int16_t)(((int16_t)rawData[4] << 8) | rawData[5]) ;
+		_bus->readRegisters(GYRO_OUT, sizeof(rawData), &rawData[0]); // Read the six raw data registers sequentially into data array
+		gAvg[0] += (int16_t)(((int16_t)rawData[0] << 8) | rawData[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
+		gAvg[1] += (int16_t)(((int16_t)rawData[2] << 8) | rawData[3]) ;
+		gAvg[2] += (int16_t)(((int16_t)rawData[4] << 8) | rawData[5]) ;
 
-	  vTaskDelay(10 / portTICK_PERIOD_MS);
-  }
+		vTaskDelay(10 / portTICK_PERIOD_MS);
+	}
 
-  for (int ii =0; ii < 3; ii++) {  // Get average of 200 values and store as average current readings
-	  aAvg[ii] /= 200;
-	  gAvg[ii] /= 200;
-  }
+	for (int ii =0; ii < 3; ii++) {  // Get average of 200 values and store as average current readings
+		aAvg[ii] /= 200;
+		gAvg[ii] /= 200;
+	}
 
 	// Configure the accelerometer for self-test
-  _bus->writeRegister(ACCEL_CONFIG, 0xE0); // Enable self test on all three axes and set accelerometer range to +/- 2 g
-  _bus->writeRegister(GYRO_CONFIG,  0xE0); // Enable self test on all three axes and set gyro range to +/- 250 degrees/s
-  vTaskDelay(25 / portTICK_PERIOD_MS);  // vTaskDelay a while to let the device stabilize
+	_bus->writeRegister(ACCEL_CONFIG, 0xE0); // Enable self test on all three axes and set accelerometer range to +/- 2 g
+	_bus->writeRegister(GYRO_CONFIG,  0xE0); // Enable self test on all three axes and set gyro range to +/- 250 degrees/s
+	vTaskDelay(25 / portTICK_PERIOD_MS);  // vTaskDelay a while to let the device stabilize
 
-  for( int ii = 0; ii < 200; ii++) {  // get average self-test values of gyro and acclerometer
-	  _bus->readRegisters(ACCEL_OUT, sizeof(rawData), &rawData[0]); // Read the six raw data registers into data array
-	  aSTAvg[0] += (int16_t)(((int16_t)rawData[0] << 8) | rawData[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
-	  aSTAvg[1] += (int16_t)(((int16_t)rawData[2] << 8) | rawData[3]) ;
-	  aSTAvg[2] += (int16_t)(((int16_t)rawData[4] << 8) | rawData[5]) ;
+	for( int ii = 0; ii < 200; ii++) {  // get average self-test values of gyro and acclerometer
+		_bus->readRegisters(ACCEL_OUT, sizeof(rawData), &rawData[0]); // Read the six raw data registers into data array
+		aSTAvg[0] += (int16_t)(((int16_t)rawData[0] << 8) | rawData[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
+		aSTAvg[1] += (int16_t)(((int16_t)rawData[2] << 8) | rawData[3]) ;
+		aSTAvg[2] += (int16_t)(((int16_t)rawData[4] << 8) | rawData[5]) ;
 
-	  _bus->readRegisters(GYRO_OUT, sizeof(rawData), &rawData[0]); // Read the six raw data registers sequentially into data array
-	  gSTAvg[0] += (int16_t)(((int16_t)rawData[0] << 8) | rawData[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
-	  gSTAvg[1] += (int16_t)(((int16_t)rawData[2] << 8) | rawData[3]) ;
-	  gSTAvg[2] += (int16_t)(((int16_t)rawData[4] << 8) | rawData[5]) ;
+		_bus->readRegisters(GYRO_OUT, sizeof(rawData), &rawData[0]); // Read the six raw data registers sequentially into data array
+		gSTAvg[0] += (int16_t)(((int16_t)rawData[0] << 8) | rawData[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
+		gSTAvg[1] += (int16_t)(((int16_t)rawData[2] << 8) | rawData[3]) ;
+		gSTAvg[2] += (int16_t)(((int16_t)rawData[4] << 8) | rawData[5]) ;
 
-	  vTaskDelay(10 / portTICK_PERIOD_MS);
-  }
+		vTaskDelay(10 / portTICK_PERIOD_MS);
+	}
 
-  for (int ii =0; ii < 3; ii++) {  // Get average of 200 values and store as average self-test readings
-	  aSTAvg[ii] /= 200;
-	  gSTAvg[ii] /= 200;
-  }
+	for (int ii =0; ii < 3; ii++) {  // Get average of 200 values and store as average self-test readings
+		aSTAvg[ii] /= 200;
+		gSTAvg[ii] /= 200;
+	}
 
- 	// Configure the gyro and accelerometer for normal operation
-   _bus->writeRegister(ACCEL_CONFIG, 0x00);
-   _bus->writeRegister(GYRO_CONFIG,  0x00);
-   vTaskDelay(25 / portTICK_PERIOD_MS);  // vTaskDelay a while to let the device stabilize
+	// Configure the gyro and accelerometer for normal operation
+	_bus->writeRegister(ACCEL_CONFIG, 0x00);
+	_bus->writeRegister(GYRO_CONFIG,  0x00);
+	vTaskDelay(25 / portTICK_PERIOD_MS);  // vTaskDelay a while to let the device stabilize
 
-   // Retrieve accelerometer and gyro factory Self-Test Code from USR_Reg
-   _bus->readRegisters(SELF_TEST_X_ACCEL, 1, &selfTest[0]);  // X-axis accel self-test results
-   _bus->readRegisters(SELF_TEST_Y_ACCEL, 1, &selfTest[1]); // Y-axis accel self-test results
-   _bus->readRegisters(SELF_TEST_Z_ACCEL, 1, &selfTest[2]); // Z-axis accel self-test results
-   _bus->readRegisters(SELF_TEST_X_GYRO, 1, &selfTest[3]);  // X-axis gyro self-test results
-   _bus->readRegisters(SELF_TEST_Y_GYRO, 1, &selfTest[4]);  // Y-axis gyro self-test results
-   _bus->readRegisters(SELF_TEST_Z_GYRO, 1, &selfTest[5]);  // Z-axis gyro self-test results
+	// Retrieve accelerometer and gyro factory Self-Test Code from USR_Reg
+	_bus->readRegisters(SELF_TEST_X_ACCEL, 1, &selfTest[0]);  // X-axis accel self-test results
+	_bus->readRegisters(SELF_TEST_Y_ACCEL, 1, &selfTest[1]); // Y-axis accel self-test results
+	_bus->readRegisters(SELF_TEST_Z_ACCEL, 1, &selfTest[2]); // Z-axis accel self-test results
+	_bus->readRegisters(SELF_TEST_X_GYRO, 1, &selfTest[3]);  // X-axis gyro self-test results
+	_bus->readRegisters(SELF_TEST_Y_GYRO, 1, &selfTest[4]);  // Y-axis gyro self-test results
+	_bus->readRegisters(SELF_TEST_Z_GYRO, 1, &selfTest[5]);  // Z-axis gyro self-test results
 
-  // Retrieve factory self-test value from self-test code reads
-   factoryTrim[0] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[0] - 1.0) )); // FT[Xa] factory trim calculation
-   factoryTrim[1] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[1] - 1.0) )); // FT[Ya] factory trim calculation
-   factoryTrim[2] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[2] - 1.0) )); // FT[Za] factory trim calculation
-   factoryTrim[3] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[3] - 1.0) )); // FT[Xg] factory trim calculation
-   factoryTrim[4] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[4] - 1.0) )); // FT[Yg] factory trim calculation
-   factoryTrim[5] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[5] - 1.0) )); // FT[Zg] factory trim calculation
+	// Retrieve factory self-test value from self-test code reads
+	factoryTrim[0] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[0] - 1.0) )); // FT[Xa] factory trim calculation
+	factoryTrim[1] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[1] - 1.0) )); // FT[Ya] factory trim calculation
+	factoryTrim[2] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[2] - 1.0) )); // FT[Za] factory trim calculation
+	factoryTrim[3] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[3] - 1.0) )); // FT[Xg] factory trim calculation
+	factoryTrim[4] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[4] - 1.0) )); // FT[Yg] factory trim calculation
+	factoryTrim[5] = (float)(2620/1<<FS)*(powf( 1.01 , ((float)selfTest[5] - 1.0) )); // FT[Zg] factory trim calculation
 
- // Report results as a ratio of (STR - FT)/FT; the change from Factory Trim of the Self-Test Response
- // To get percent, must multiply by 100
-   for (int i = 0; i < 3; i++) {
-	 result[i]   = 100.0*((float)(aSTAvg[i] - aAvg[i]))/factoryTrim[i] - 100.;   // Report percent differences
-	 result[i+3] = 100.0*((float)(gSTAvg[i] - gAvg[i]))/factoryTrim[i+3] - 100.; // Report percent differences
-   }
+	// Report results as a ratio of (STR - FT)/FT; the change from Factory Trim of the Self-Test Response
+	// To get percent, must multiply by 100
+	for (int i = 0; i < 3; i++) {
+		result[i]   = 100.0*((float)(aSTAvg[i] - aAvg[i]))/factoryTrim[i] - 100.;   // Report percent differences
+		result[i+3] = 100.0*((float)(gSTAvg[i] - gAvg[i]))/factoryTrim[i+3] - 100.; // Report percent differences
+	}
 
-   //_bus->setBusHighSpeed();
+	//_bus->setBusHighSpeed();
 }
 
 void MPU9250::CalibrateMagnetometer(float * dest1, float * dest2)
 {
-  uint16_t ii = 0, sample_count = 0;
-  int32_t mag_bias[3] = {0, 0, 0}, mag_scale[3] = {0, 0, 0};
-  int16_t mag_max[3] = {-32767, -32767, -32767}, mag_min[3] = {32767, 32767, 32767}, mag_temp[3] = {0, 0, 0};
+	uint16_t ii = 0, sample_count = 0;
+	int32_t mag_bias[3] = {0, 0, 0}, mag_scale[3] = {0, 0, 0};
+	int16_t mag_max[3] = {-32767, -32767, -32767}, mag_min[3] = {32767, 32767, 32767}, mag_temp[3] = {0, 0, 0};
 
-  //_bus->setBusLowSpeed();
+	//_bus->setBusLowSpeed();
 
-  ESP_LOGI(_TAG, "Mag Calibration: Wave device in a figure eight until done!");
-  vTaskDelay(4000 / portTICK_PERIOD_MS);
+	ESP_LOGI(_TAG, "Mag Calibration: Wave device in a figure eight until done!");
+	vTaskDelay(4000 / portTICK_PERIOD_MS);
 
-  // shoot for ~fifteen seconds of mag data
-  //sample_count = 128;  // at 8 Hz ODR, new mag data is available every 125 ms
-  sample_count = 1500;  // at 100 Hz ODR, new mag data is available every 10 ms
-  for(ii = 0; ii < sample_count; ii++) {
-			getMagCounts(&mag_temp[0], &mag_temp[1], &mag_temp[2]); // Read the mag data
+	// shoot for ~fifteen seconds of mag data
+	//sample_count = 128;  // at 8 Hz ODR, new mag data is available every 125 ms
+	sample_count = 1500;  // at 100 Hz ODR, new mag data is available every 10 ms
+	for(ii = 0; ii < sample_count; ii++) {
+		getMagCounts(&mag_temp[0], &mag_temp[1], &mag_temp[2]); // Read the mag data
 		for (int jj = 0; jj < 3; jj++) {
-		  if(mag_temp[jj] > mag_max[jj]) mag_max[jj] = mag_temp[jj];
-		  if(mag_temp[jj] < mag_min[jj]) mag_min[jj] = mag_temp[jj];
+			if(mag_temp[jj] > mag_max[jj]) mag_max[jj] = mag_temp[jj];
+			if(mag_temp[jj] < mag_min[jj]) mag_min[jj] = mag_temp[jj];
 		}
 		//vTaskDelay(135);  // at 8 Hz ODR, new mag data is available every 125 ms
 		vTaskDelay(12 / portTICK_PERIOD_MS);  // at 100 Hz ODR, new mag data is available every 10 ms
-  }
+	}
 
-//    Serial.println("mag x min/max:"); Serial.println(mag_max[0]); Serial.println(mag_min[0]);
-//    Serial.println("mag y min/max:"); Serial.println(mag_max[1]); Serial.println(mag_min[1]);
-//    Serial.println("mag z min/max:"); Serial.println(mag_max[2]); Serial.println(mag_min[2]);
+	//    Serial.println("mag x min/max:"); Serial.println(mag_max[0]); Serial.println(mag_min[0]);
+	//    Serial.println("mag y min/max:"); Serial.println(mag_max[1]); Serial.println(mag_min[1]);
+	//    Serial.println("mag z min/max:"); Serial.println(mag_max[2]); Serial.println(mag_min[2]);
 
 	// Get hard iron correction
 	mag_bias[0]  = (mag_max[0] + mag_min[0])/2;  // get average x mag bias in counts
@@ -1201,7 +1201,7 @@ esp_err_t MPU9250::CalibrateAccelSetup()
 		return ESP_FAIL;
 	}
 	if (setSrd(19)) {
-		ESP_LOGI(_TAG, "acc srd su\n");
+		ESP_LOGI(_TAG, "acc srd su");
 		return ESP_FAIL;
 	}
 
@@ -1218,7 +1218,7 @@ esp_err_t MPU9250::CalibrateAccelTearDown()
 		return ESP_FAIL;
 	}
 	if (setSrd(_srd)) {
-		ESP_LOGI(_TAG, "acc srd td\n");
+		ESP_LOGI(_TAG, "acc srd td");
 		return ESP_FAIL;
 	}
 	return ESP_OK;
@@ -1234,7 +1234,7 @@ esp_err_t MPU9250::CalibrateGyroSetup()
 		return ESP_FAIL;
 	}
 	if (setSrd(19)) {
-		ESP_LOGI(_TAG, "gyro srd su\n");
+		ESP_LOGI(_TAG, "gyro srd su");
 		return ESP_FAIL;
 	}
 	return ESP_OK;
@@ -1250,7 +1250,7 @@ esp_err_t MPU9250::CalibrateGyroTearDown()
 		return ESP_FAIL;
 	}
 	if (setSrd(_srd)) {
-		ESP_LOGI(_TAG, "gyro srd td\n");
+		ESP_LOGI(_TAG, "gyro srd td");
 		return ESP_FAIL;
 	}
 	return ESP_OK;
@@ -1259,12 +1259,12 @@ esp_err_t MPU9250::CalibrateGyroTearDown()
 void MPU9250::Get(Measurement_t& measurement)
 {
 	getMotion9(&measurement.Accelerometer[0],
-			   &measurement.Accelerometer[1],
-			   &measurement.Accelerometer[2],
-			   &measurement.Gyroscope[0],
-			   &measurement.Gyroscope[1],
-			   &measurement.Gyroscope[2],
-			   &measurement.Magnetometer[0],
-			   &measurement.Magnetometer[1],
-			   &measurement.Magnetometer[2]);
+			&measurement.Accelerometer[1],
+			&measurement.Accelerometer[2],
+			&measurement.Gyroscope[0],
+			&measurement.Gyroscope[1],
+			&measurement.Gyroscope[2],
+			&measurement.Magnetometer[0],
+			&measurement.Magnetometer[1],
+			&measurement.Magnetometer[2]);
 }

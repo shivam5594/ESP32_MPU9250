@@ -5,7 +5,7 @@
    Unless required by applicable law or agreed to in writing, this
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
-*/
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,9 +23,9 @@
 extern "C" void app_main(void)
 {
 	start_wifi_logger(); // Start wifi logger
-    esp_err_t ret = ESP_FAIL;
+	esp_err_t ret = ESP_FAIL;
 
-    i2c_port_t I2Cport = I2C_NUM_0;
+	i2c_port_t I2Cport = I2C_NUM_0;
 
 	uint8_t address;
 	address = 0x68;
@@ -59,5 +59,5 @@ extern "C" void app_main(void)
 	}
 
 
-    ESP_ERROR_CHECK(ret);
+	ESP_ERROR_CHECK(ret);
 }
